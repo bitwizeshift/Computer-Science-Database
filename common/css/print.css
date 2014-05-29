@@ -1,0 +1,40 @@
+@charset "utf-8";
+
+/*  BETA CREATIONS - GLOBAL ELEMENT STYLES
+*   AUTHOR:		BITWIZE
+*   DATE:		JANUARY, 2013
+*
+*   STRUCTURE:
+*   --------------------------------------------------------------------------------------------------------------
+*		Page width 					980px
+*    	$__reset					Reset browser styles
+*    	$__rebuild					Rebuild browser styles
+*		$__globals					Global values
+*    	$__header					Header Definitions
+*     	$__navigation     			Navigation Definitions
+*    	$__menu						Site Navigation
+*	 	$__content					Everything within the content
+*		$__footer					Footer Definitions
+*		$__system-alert				System alert and error messages
+*
+*   STYLE ORDER:
+*   --------------------------------------------------------------------------------------------------------------
+*		1) float, clear
+*		2) width, height
+*		3) margin, padding
+*		4) display
+*		5) border, border-radius
+*		6) background
+*		7) font, text, color
+*		8) anything else.
+*
+------------------------------------------------------------------------------------------------------------------ */
+
+/* __reset
+---------------------------------------------------------------------------- */
+
+@import url("reset.css");
+
+
+#header,#footer{display: none;}
+a:after{content: "(URL: " attr(href) " )";}

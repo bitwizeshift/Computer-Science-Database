@@ -26,11 +26,69 @@
 
 /* __rebuild
 ---------------------------------------------------------------------------- */
-
+body{
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #333;
+	background-color: #fff;
+}
+h1,h2,h3{
+	margin-top: 20px;
+  margin-bottom: 10px;
+}
+h1,h2,h3,h4,h5,h6{
+	font-family: inherit;
+	font-weight: 500;
+	line-height: 1.1;
+	color: inherit;
+}
+h1{
+	font-size: 2em;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+}
+h2{
+	font-size: 1.8em;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+}
+h3{
+	font-size: 1.6em;
+}
+h4{
+	font-size: 1.4em;
+}
+h5{
+	font-size: 1.2em;
+}
+h1{
+	
+}
+p{
+	margin: 0 0 10px;
+}
+strong{font-weight: 700; }
+em{font-style: italic; }
 
 /* __globals
 ---------------------------------------------------------------------------- */
-
+.alert {
+  text-shadow: 0 1px 0 rgba(255,255,255,.2);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.25),0 1px 2px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25),0 1px 2px rgba(0,0,0,.05);
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.alert-info {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #31708f;
+}
 
 /* __header
 ---------------------------------------------------------------------------- */

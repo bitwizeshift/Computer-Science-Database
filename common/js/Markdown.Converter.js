@@ -268,9 +268,12 @@ else
 
             // Make sure text begins and ends with a couple of newlines:
             text = "\n\n" + text + "\n\n";
-
+            
             // Convert all tabs to spaces.
             text = _Detab(text);
+
+            // Process Tables
+            text = _Tables(text);
 
             // Strip any lines consisting only of spaces and tabs.
             // This makes subsequent regexen easier to write, because we can
@@ -485,7 +488,7 @@ else
             return hashBlock(m1);
         }
         
-        var blockGamutHookCallback = function (t) { return _RunBlockGamut(t); }
+        var blockGamutHookCallback = function (t) { return _RunBlockGamut(t); };
 
         function _RunBlockGamut(text, doNotUnhash) {
             //
@@ -545,6 +548,8 @@ else
             
             text = _EncodeAmpsAndAngles(text);
             text = _DoItalicsAndBold(text);
+            text = _DoUnderlineAndStrikethrough(text);
+            text = _DoSubscriptAndSuperscript(text);
 
             // Do hard breaks:
             text = text.replace(/  +\n/g, " <br>\n");
@@ -553,6 +558,134 @@ else
 
             return text;
         }
+        
+        function _doTable_leadingPipe_callback( str, head, underline, content) {
+            //# Remove leading pipepreg_split for each row.
+            //$content = preg_replace('/^ *[|]/m', '', $content);
+              content = content.replace( /^ *[|]/mg, '' );
+            //return $this->_doTable_callback(array($matches[0], $head, $underline, $content));
+              return _DoTable_callback( str, head, underline, content);
+            }
+
+            function _DoTable_callback( str, head, underline, content) {
+            //    # Remove any tailing pipes for each line.
+            //    $head    = preg_replace('/[|] *$/m', '', $head);
+                  head = head.replace( /[|] *$/mg, '' );
+            //    $underline  = preg_replace('/[|] *$/m', '', $underline);
+                  underline = underline.replace( /[|] *$/mg, '' );
+            //    $content  = preg_replace('/[|] *$/m', '', $content);
+                  content = content.replace( /[|] *$/mg, '' );
+            //    
+            //    # Reading alignement from header underline.
+            //    $separators  = preg_split('/ *[|] */', $underline);
+                  var separators = underline.split( / *[|] */ );
+                  var separatorsLength = separators.length;
+                  var attr = [];
+            //    foreach ($separators as $n => $s) {
+                  for ( var i=0; i < separatorsLength; i++ ) {
+            //      if (preg_match('/^ *-+: *$/', $s))
+                    if ( separators[ i ].match( /^ *-+: *$/ ) ) {
+            //        $attr[$n] = ' align="right"';
+                      attr[ i ] = ' align="right"';
+            //      else if (preg_match('/^ *:-+: *$/', $s))
+                    } else if ( separators[ i ].match( /^ *:-+: *$/ ) ) {
+            //        $attr[$n] = ' align="center"';
+                      attr[ i ] = ' align="center"';
+            //      else if (preg_match('/^ *:-+ *$/', $s))
+                    } else if ( separators[ i ].match( /^ *:-+ *$/ ) ) {
+            //        $attr[$n] = ' align="left"';
+                      attr[ i ] = ' align="left"';
+            //      else
+                    } else {
+            //        $attr[$n] = '';
+                      attr[ i ] = '';
+                    }
+                  }
+
+            //    
+            //    # Parsing span elements, including code spans, character escapes, 
+            //    # and inline HTML tags, so that pipes inside those gets ignored.
+            //    $head    = $this->parseSpan($head);
+                  head = _RunSpanGamut( head );
+            //    $headers  = preg_split('/ *[|] */', $head);
+                  var headers = head.split( / *[|] */ );
+            //    $col_count  = count($headers);
+                  var col_count = headers.length;
+            //    
+            //    # Write column headers.
+            //    $text = "<table>\n";
+                  var text = "<table>\n";
+            //    $text .= "<thead>\n";
+                  text += "<thead>\n";
+            //    $text .= "<tr>\n";
+                  text += "<tr>\n";
+            //    foreach ($headers as $n => $header)
+                  for ( var i=0; i < col_count; i++ ) {
+                    text += "  <th" + attr[ i ] + ">" + _RunSpanGamut( headers[ i ].trim() ) + "</th>\n";
+            //      $text .= "  <th$attr[$n]>".$this->runSpanGamut(trim($header))."</th>\n";
+                  }
+            //    $text .= "</tr>\n";
+                  text += "</tr>\n";
+            //    $text .= "</thead>\n";
+                  text += "</thead>\n";
+            //    
+            //    # Split content by row.
+            //    $rows = explode("\n", trim($content, "\n"));
+                  var rows = content.trim().split( "\n" );
+            //    
+            //    $text .= "<tbody>\n";
+                  text += "<tbody>\n";
+            //    foreach ($rows as $row) {
+                  for ( var i=0; i < rows.length; i++ ) {
+            //      # Parsing span elements, including code spans, character escapes, 
+            //      # and inline HTML tags, so that pipes inside those gets ignored.
+            //      $row = $this->parseSpan($row);
+                    var row = _RunSpanGamut( rows[ i ] );
+
+            //      # Split row by cell.
+            //      $row_cells = preg_split('/ *[|] */', $row, $col_count);
+                    var row_cells = row.split( / *[|] */ );
+            //      $row_cells = array_pad($row_cells, $col_count, '');
+                    var row_cells_count = row_cells.length;
+                    while ( row_cells_count < col_count ) {
+                      row_cells[ row_cells_count++ - 1 ] = '';
+                    }
+
+            //      
+            //      $text .= "<tr>\n";
+                    text += "<tr>\n";
+            //      foreach ($row_cells as $n => $cell)
+                    for ( var a=0; a < row_cells.length; a++ ) {
+            //        $text .= "  <td$attr[$n]>".$this->runSpanGamut(trim($cell))."</td>\n";
+                      text += "  <td"+ attr[ i ] + ">" + _RunSpanGamut( row_cells[ a ].trim() ) + "</td>\n";
+                    }
+            //      $text .= "</tr>\n";
+                    text += "</tr>\n";
+            //    }
+                  }
+            //    $text .= "</tbody>\n";
+            //    $text .= "</table>";
+                  text += "</tbody>\n";
+                  text += "</table>";
+            //    # TODO: hashBlock requires pagedown integration.
+            //    return $this->hashBlock($text) . "\n";
+                  return hashBlock( text ) + "\n";
+            }
+
+            function _Tables( text ) {
+              // [\r|\n|\r\n] => \n
+              // \Z => (?![\s\S])
+              // . => [\S\s]
+              // atomic grouping (?>group)* => (?:(?=(group))\1)*
+              // adjust \1 to the captured group number as necessary.
+              var rgx_leading_pipe = /^[ ]{0,3}[|]([\S\s]+)\n[ ]{0,3}[|]([ ]*[-:]+[-| :]*)\n((?:(?=([ ]*[|][\S\s]*\n))\4)*)(?=\n|(?![\s\S]))/mg
+              text = text.replace( rgx_leading_pipe, _doTable_leadingPipe_callback );
+
+              var rgx_no_leading_pipe = /^[ ]{0,3}(\S[\S\s]*[|][\S\s]*)\n[ ]{0,3}([-:]+[ ]*[|][-| :]*)\n((?:(?=([\S\s]*[|][\S\s]*\n))\4)*)(?=\n|(?![\s\S]))/mg
+              text = text.replace( rgx_no_leading_pipe, _DoTable_callback );
+
+              return text;
+            }
 
         function _EscapeSpecialCharsWithinTagAttributes(text) {
             //
@@ -1147,7 +1280,7 @@ else
             text = text.replace(/>/g, "&gt;");
 
             // Now, escape characters that are magic in Markdown:
-            text = escapeCharacters(text, "\*_{}[]\\", false);
+            text = escapeCharacters(text, "\*^=_{}[]\\", false);
 
             // jj the line above breaks this:
             //---
@@ -1187,15 +1320,42 @@ else
             // (?!\2)              Not followed by another marker character (ensuring that we match the
             //                     rightmost two in a longer row)...
             // (?=[\W_]|$)         ...but by any other non-word character or the end of string.
-            text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\*|_)\2(?=\S)([^\r]*?\S)\2\2(?!\2)(?=[\W_]|$)/g,
+            // text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\*|_)\2(?=\S)([^\r]*?\S)\2\2(?!\2)(?=[\W_]|$)/g,
+            text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\*)\2(?=\S)([^\r]*?\S)\2\2(?!\2)(?=[\W_]|$)/g,
             "$1<strong>$3</strong>");
 
             // This is almost identical to the <strong> regex, except 1) there's obviously just one marker
             // character, and 2) the italicized string cannot contain the marker character.
-            text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\*|_)(?=\S)((?:(?!\2)[^\r])*?\S)\2(?!\2)(?=[\W_]|$)/g,
+            //text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\*|_)\2(?=\S)([^\r]*?\S)\2(?!\2)(?=[\W_]|$)/g,
+            text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\*)(?=\S)((?:(?!\2)[^\r])*?\S)\2(?!\2)(?=[\W_]|$)/g,
             "$1<em>$3</em>");
 
             return deasciify(text);
+        }
+        
+        function _DoUnderlineAndStrikethrough(text){
+        	
+        	text = asciify(text);
+        	
+        	text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\=)\2(?=\S)([^\r]*?\S)\2\2(?!\2)(?=[\W_]|$)/g,
+            "$1<del>$3</del>");
+        	
+        	text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\_)\2(?=\S)([^\r]*?\S)\2\2(?!\2)(?=[\W_]|$)/g,
+            "$1<span class='underline'>$3</span>");
+        	
+        	return deasciify(text);
+        }
+        
+        function _DoSubscriptAndSuperscript(text){
+        	text = asciify(text);
+        	
+        	text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\^)(?=\S)((?:(?!\2)[^\r])*?\S)\2(?!\2)(?=[\W_]|$)/g,
+            "$1<sup>$3</sup>");
+        	
+        	text = text.replace(/(^|[\W_])(?:(?!\1)|(?=^))(\_)(?=\S)((?:(?!\2)[^\r])*?\S)\2(?!\2)(?=[\W_]|$)/g,
+            "$1<sub>$3</sub>");
+        	
+        	return deasciify(text);
         }
 
         function _DoBlockQuotes(text) {

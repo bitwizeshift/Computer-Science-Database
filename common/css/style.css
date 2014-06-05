@@ -72,6 +72,8 @@ p{
 }
 strong{font-weight: 700; }
 em{font-style: italic; }
+sup, sub { vertical-align: baseline; position: relative; top: -0.4em; font-size: 75%; }
+sub { top: 0.4em; }
 
 /* __globals
 ---------------------------------------------------------------------------- */
@@ -89,7 +91,9 @@ em{font-style: italic; }
   border-color: #bce8f1;
   color: #31708f;
 }
-
+.underline{
+	text-decoration: underline;
+}
 /* __header
 ---------------------------------------------------------------------------- */
 

@@ -23,7 +23,19 @@
 
         italic: "Emphasis <em> Ctrl+I",
         italicexample: "emphasized text",
+        
+        underline: "Underline <u> Ctrl+U",
+        underlineexample: "underline text",
 
+        strikethrough: "Strikethrough <del> Ctrl+~",
+        strikethroughexample: "strikethrough text",
+                
+        subscript: "Subscript <sub> Ctrl+=",
+        subscriptexample: "subscript text",
+        
+        superscript: "Superscript <sup> Ctrl+Shift++",
+        supserscriptexample: "superscript text",
+        
         link: "Hyperlink <a> Ctrl+L",
         linkdescription: "enter link description here",
         linkdialog: "<p><b>Insert Hyperlink</b></p><p>http://example.com/ \"optional title\"</p>",
@@ -51,6 +63,9 @@
         redo: "Redo - Ctrl+Y",
         redomac: "Redo - Ctrl+Shift+Z",
 
+        math: "Math Ctrl+M",
+        mathexample: "math text",
+        
         help: "Markdown Editing Help"
     };
 
@@ -1239,6 +1254,25 @@
                     case "i":
                         doClick(buttons.italic);
                         break;
+                    /* Added */
+//                    case "u":
+//                    	doClick(buttons.underline);
+//                    	break;
+                    case "m":
+                    	doClick(buttons.math);
+                    	break;
+                    case "~":
+                    	doClick(buttons.strikethrough);
+                    	break;
+                    case "+":
+                    	if(key.shiftKey){
+                    		doSuperscript(buttons.superscript);
+                    	}
+                    	break;
+                    case "=":
+                    	doSubscript(buttons.subscript);
+                    	break;
+                    /* end added */
                     case "l":
                         doClick(buttons.link);
                         break;
@@ -1460,11 +1494,20 @@
                 spacer.id = "wmd-spacer" + num + postfix;
                 buttonRow.appendChild(spacer);
                 xPosition += 25;
-            }
+            };
 
             buttons.bold = makeButton("wmd-bold-button", getString("bold"), "0px", bindCommand("doBold"));
             buttons.italic = makeButton("wmd-italic-button", getString("italic"), "-20px", bindCommand("doItalic"));
+            buttons.underline = makeButton("wmd-underline-button", getString("underline"), "-40px", bindCommand("doUnderline"));
+            buttons.strikethrough = makeButton("wmd-strikethrough-button", getString("strikethrough"), "-60px", bindCommand("doStrikethrough"));
             makeSpacer(1);
+            buttons.superscript = makeButton("wmd-superscript-button", getString("superscript"), "-80px", bindCommand("doSuperscript"));
+            buttons.subscript = makeButton("wmd-subscript-button", getString("subscript"), "-100px", bindCommand("doSubscript"));
+            makeSpacer(2);
+            
+            buttons.math = makeButton("wmd-math-button", getString("math"), "-30px", bindCommand("doMath"));
+            
+            
             buttons.link = makeButton("wmd-link-button", getString("link"), "-40px", bindCommand(function (chunk, postProcessing) {
                 return this.doLinkOrImage(chunk, postProcessing, false);
             }));
@@ -1473,7 +1516,7 @@
             buttons.image = makeButton("wmd-image-button", getString("image"), "-100px", bindCommand(function (chunk, postProcessing) {
                 return this.doLinkOrImage(chunk, postProcessing, true);
             }));
-            makeSpacer(2);
+            makeSpacer(3);
             buttons.olist = makeButton("wmd-olist-button", getString("olist"), "-120px", bindCommand(function (chunk, postProcessing) {
                 this.doList(chunk, postProcessing, true);
             }));
@@ -1482,7 +1525,7 @@
             }));
             buttons.heading = makeButton("wmd-heading-button", getString("heading"), "-160px", bindCommand("doHeading"));
             buttons.hr = makeButton("wmd-hr-button", getString("hr"), "-180px", bindCommand("doHorizontalRule"));
-            makeSpacer(3);
+            makeSpacer(4);
             buttons.undo = makeButton("wmd-undo-button", getString("undo"), "-200px", null);
             buttons.undo.execute = function (manager) { if (manager) manager.undo(); };
 
@@ -1553,6 +1596,34 @@
         });
 
         chunk.selection = chunk.selection.replace(/\s+$/, "");
+    };
+    
+    commandProto.doMath = function (chunk, postProcessing) {
+    	//chunk.trimWhitespace();
+    	chunk.selection = chunk.selection.replace(/\n{2,}/g, "\n");
+    	if(!chunk.selection){
+    		chunk.selection = this.getString("mathexample");
+    	}
+    	chunk.after = "$$" + chunk.after.replace(/^([*_]*)/, "");
+        chunk.before = chunk.before.replace(/(\s?)$/, "") + "$$";
+    };
+    
+    // Processes underline, returning underlined text
+    commandProto.doUnderline = function (chunk, postProcessing){
+    	return;
+    };
+    
+    // Processes strikethrough, returning strike-through text
+    commandProto.doStrikethrough = function (chunk, postProcessing){
+    	return;
+    };
+    
+    commandProto.doSuperscript = function(chunk, postProcessing){
+    	return;
+    };
+    
+    commandProto.doSubscript = function(chunk, postProcessing){
+    	return;
     };
 
     commandProto.doBold = function (chunk, postProcessing) {
@@ -2206,7 +2277,7 @@
         chunk.startTag = "----------\n";
         chunk.selection = "";
         chunk.skipLines(2, 1, true);
-    }
+    };
 
 
 })();

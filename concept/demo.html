@@ -21,10 +21,6 @@
   <!-- End -->
   <link  type="text/css" rel="stylesheet" href="../common/css/style.css"/>
   <style>
-  body{
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 14px;
-  }
   #header{
     position: fixed;
     top: 0;
@@ -36,7 +32,6 @@
   }
   #sidebar{
     position: fixed;
-    left: 0;
     top: 2em;
     width: 200px;
     height: 100%;
@@ -103,6 +98,18 @@
     text-decoration: line-through;
     color: #ff0000;
   }
+  ul li{
+    list-style: circle outside;
+    margin-left: 20px;
+  }
+  ol li{
+    list-style: decimal outside;
+    margin-left: 20px;
+  }
+  ul, ol{
+    display: block;
+    margin: 10px 0;
+  }
   </style>
 </head>
     
@@ -117,28 +124,90 @@
     <input placeholder="Article Name"></input>
     <div id="wmd-button-bar"></div>
     <textarea id="wmd-input" class="input">
-#Heading 1
+#**Heading 1**: Inline Formatting
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque a arcu eget dui congue vehicula a a lorem. Pellentesque vulputate, est a pellentesque sollicitudin, neque nulla ullamcorper orci, sed pulvinar est enim non ligula. Fusce gravida urna ac arcu interdum, vel eleifend augue ullamcorper. Vivamus egestas, enim vel congue pretium, tortor est sagittis neque, ut sollicitudin augue massa eget quam. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam vel metus vitae nisl varius faucibus. Sed laoreet tortor non sem mattis vehicula. Sed nec odio eleifend, consectetur lacus a, ornare lorem. Duis sagittis magna arcu, eu ornare enim egestas non.
+**strong**: Done by surrounding any text by two pairs of asterisks (e.g. `**this text is bold**`)
 
-##Heading 2
+*italics*: Done by surrounding any text by a pair of asterisks (e.g. `*this text is italicized*`)
 
-Fusce ultricies id lectus eget molestie. Fusce ligula mauris, hendrerit a interdum id, tincidunt ac dui. Proin placerat orci pellentesque mauris malesuada, sit amet posuere sapien accumsan. Duis vestibulum malesuada hendrerit. Aenean id nulla rutrum, vestibulum sapien in, euismod mauris. Duis quis massa rhoncus, fermentum elit non, eleifend risus. Nunc eu urna at magna suscipit ornare. Proin sagittis nunc et lorem elementum lobortis non non purus.
-"""
-Block-quoted text gets surrounded by three double-quotes`"""`
+==deleted==: Done by surrounding any text by a pair of equals (e.g. `==this text is deleted==`)
+
+__underlined__: Done by surrounding any text by a pair of underscores (e.g. `__this text is underlined__`)
+
+\\(Math\\): Done by starting any equation with `\\(` and ending with `\\)` (e.g. `\\(a^2+b^2=c^2)\\)`)
+
+`code`: Done by surrounding any text with backticks (`` ` ``) (e.g. `` `<p>Hello world!</p>` ``)
+
+^superscript^: Done by surrounding any text with carots (`^`) (e.g. `^superscript^`)
+
+_subscript_: Done by surrounding any text with underscores (e.g. `_subscript_`)
+
+##**Heading 2**: Block Formatting
+
+    Block formatted code lines start with 4 spaces
+    Example:
+    
+        void foo(){
+          // do something
+        }
+    
+    (kinda hard to give an example)
+
+>Block-quoted lines start with `>`
+>
+>**Example**
+>
+>    `> This is a blockquote`
+
+Unordered lists are easily done by multiple lines starting with either `-`,`+`, or `*`.
+
+- Unordered list element
+- Unordered list element
+
+**Example**:
+
+    - Unordered list element
+    - Unordered list element
+
+Ordered lists are easily created by writing numbered lines 
+
+1. Element 1
+2. Element 2
+3. Element 3
 
 **Example**
 
-`"""This would produce a quote"""`
-"""
+    1. Element 1
+    2. Element 2
+    3. Element 3
 
-Code elements can be displayed in one of two ways. If code is inline, it can be displayed using backticks to produce something like this `<code>Test code</code>`
+Headings are done by starting a line with a pound sign (`#`). The number of `#`s used represents the header used (from 1 to 6) 
 
-If, however, the code is longer than 1 line and needs to displayed properly, it can be done so by indenting each line with 4 spaces. For example:
+**Example**
 
-    def foo(bar):
-        print("Contents of bar: " + bar)
-        return
+    #Header 1
+    ##Header 2
+    ###Header 3
+    ####Header 4
+    #####Header 5
+    ######Header 6
+
+Alternatively, headers 1 and 2 may also be done by underlining text
+
+    Header 1
+    ========
+    Header 2
+    --------
+
+Block-Math formatting can be accomplished by putting each equation line between two dollar signs (`$$`).
+
+$$F(x,y)=M(x,y)dx + N(x,y)dy = C$$
+$$F(x,y)=\int M(x,y)dx + \int N(x,y)dy - \iint\frac{\partial{M},\partial{y}}dydx=C$$
+
+**Example**: 
+
+    $$F(x,y)=M(x,y)dx + N(x,y)dy = C$$
+    $$F(x,y)=\int M(x,y)dx + \int N(x,y)dy - \iint\frac{\partial{M},\partial{y}}dydx=C$$
 
 ###Heading 3
 
@@ -154,28 +223,19 @@ Phasellus sit amet viverra erat. Maecenas porttitor nibh et blandit sodales. Mor
 
 ######Heading 6
 
+
 </textarea>
     <div id="wmd-preview" class="output"></div>
     <script type="text/javascript">
             (function () {
-            	  var converter = new Markdown.getSanitizingConverter();
-            	              	  
-/*            	  converter.hooks.chain("preSpanGamut", function(text){
-                      return text.replace(/~(.*?)~/, '<del>' + text + '</del>');
-                  }); */
+            	  var converter = new Markdown.Converter();
             	  
             	  converter.hooks.chain("preBlockGamut", function (text, rbg) {
                       return text.replace(/^ {0,3}""" *\n((?:.*?\n)+?) {0,3}""" *$/gm, function (whole, inner) {
                           return "<blockquote>" + rbg(inner) + "</blockquote>\n";
                       });
-                  });
+                  }); 
 
-                converter.hooks.chain("postBlockGamut", function (text, rbg) {
-                    return text.replace(/~(.*?)~/, function (whole, inner) {
-                      return "<del>" + inner +"</del>";
-                    });
-                });
-                  
                 converter.hooks.chain("plainLinkText", function (url) {
                     return "This is a link to " + url.replace(/^https?:\/\//, "");
                 });

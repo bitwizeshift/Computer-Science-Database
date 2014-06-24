@@ -1,9 +1,10 @@
 <?php
 /**
+ * Connection Class
  * 
  * 
  * @author Bitwize
- * @since 1.0
+ * @since  1.0
  */
 class Connection {	
 	private $conn = null;

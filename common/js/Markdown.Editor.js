@@ -24,6 +24,8 @@
         italic: "Emphasis <em> Ctrl+I",
         italicexample: "emphasized text",
         
+        // Additions:
+        
         underline: "Underline <u> Ctrl+U",
         underlineexample: "underline text",
 
@@ -35,6 +37,11 @@
         
         superscript: "Superscript <sup> Ctrl+Shift++",
         supserscriptexample: "superscript text",
+        
+        math: "Math Ctrl+M",
+        mathexample: "math text",
+        
+        // End additions
         
         link: "Hyperlink <a> Ctrl+L",
         linkdescription: "enter link description here",
@@ -62,9 +69,6 @@
         undo: "Undo - Ctrl+Z",
         redo: "Redo - Ctrl+Y",
         redomac: "Redo - Ctrl+Shift+Z",
-
-        math: "Math Ctrl+M",
-        mathexample: "math text",
         
         help: "Markdown Editing Help"
     };

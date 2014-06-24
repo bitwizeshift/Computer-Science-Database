@@ -1,11 +1,12 @@
-<?php require("common/src/functions.php");?>
+<?php require_once("common/src/functions.php");?>
 <!DOCTYPE html>
 <html>
 <head>
-<title>None</title>
-
+<?php require_once("common/src/header.php")?>
 </head>
 <body>
 
+
+<?php require_once("common/src/footer.php")?>
 </body>
 </html>

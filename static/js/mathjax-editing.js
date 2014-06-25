@@ -153,7 +153,7 @@
 
   //
   //  Set up MathJax to allow canceling of typesetting, if it
-//      doesn't already have that.
+  //      doesn't already have that.
   //
   (function () {
     var HUB = MathJax.Hub;

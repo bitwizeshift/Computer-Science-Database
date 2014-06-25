@@ -10,7 +10,7 @@
         nav = window.navigator,
         SETTINGS = { lineLength: 72 },
 
-    // Used to work around some browser bugs where we can't use feature testing.
+        // Used to work around some browser bugs where we can't use feature testing.
         uaSniffed = {
             isIE: /msie/.test(nav.userAgent.toLowerCase()),
             isIE_5or6: /msie 6/.test(nav.userAgent.toLowerCase()) || /msie 5/.test(nav.userAgent.toLowerCase()),
@@ -73,22 +73,10 @@
         help: "Markdown Editing Help"
     };
 
-
-    // -------------------------------------------------------------------
-    //  YOUR CHANGES GO HERE
-    //
-    // I've tried to localize the things you are likely to change to
-    // this area.
-    // -------------------------------------------------------------------
-
     // The default text that appears in the dialog input box when entering
     // links.
     var imageDefaultText = "http://";
     var linkDefaultText = "http://";
-
-    // -------------------------------------------------------------------
-    //  END OF YOUR CHANGES
-    // -------------------------------------------------------------------
 
     // options, if given, can have the following properties:
     //   options.helpButton = { handler: yourEventHandler }

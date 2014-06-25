@@ -560,24 +560,18 @@ else
         }
         
         function _doTable_leadingPipe_callback( str, head, underline, content) {
-            //# Remove leading pipepreg_split for each row.
-            //$content = preg_replace('/^ *[|]/m', '', $content);
-              content = content.replace( /^ *[|]/mg, '' );
-            //return $this->_doTable_callback(array($matches[0], $head, $underline, $content));
-              return _DoTable_callback( str, head, underline, content);
-            }
+        	// Remove leading pipepreg_split for each row.
+        	content = content.replace( /^ *[|]/mg, '' );
+        	return _DoTable_callback( str, head, underline, content);
+        }
 
             function _DoTable_callback( str, head, underline, content) {
             //    # Remove any tailing pipes for each line.
-            //    $head    = preg_replace('/[|] *$/m', '', $head);
                   head = head.replace( /[|] *$/mg, '' );
-            //    $underline  = preg_replace('/[|] *$/m', '', $underline);
                   underline = underline.replace( /[|] *$/mg, '' );
-            //    $content  = preg_replace('/[|] *$/m', '', $content);
                   content = content.replace( /[|] *$/mg, '' );
             //    
             //    # Reading alignement from header underline.
-            //    $separators  = preg_split('/ *[|] */', $underline);
                   var separators = underline.split( / *[|] */ );
                   var separatorsLength = separators.length;
                   var attr = [];
@@ -585,19 +579,15 @@ else
                   for ( var i=0; i < separatorsLength; i++ ) {
             //      if (preg_match('/^ *-+: *$/', $s))
                     if ( separators[ i ].match( /^ *-+: *$/ ) ) {
-            //        $attr[$n] = ' align="right"';
                       attr[ i ] = ' align="right"';
             //      else if (preg_match('/^ *:-+: *$/', $s))
                     } else if ( separators[ i ].match( /^ *:-+: *$/ ) ) {
-            //        $attr[$n] = ' align="center"';
                       attr[ i ] = ' align="center"';
             //      else if (preg_match('/^ *:-+ *$/', $s))
                     } else if ( separators[ i ].match( /^ *:-+ *$/ ) ) {
-            //        $attr[$n] = ' align="left"';
                       attr[ i ] = ' align="left"';
             //      else
                     } else {
-            //        $attr[$n] = '';
                       attr[ i ] = '';
                     }
                   }
@@ -678,10 +668,10 @@ else
               // . => [\S\s]
               // atomic grouping (?>group)* => (?:(?=(group))\1)*
               // adjust \1 to the captured group number as necessary.
-              var rgx_leading_pipe = /^[ ]{0,3}[|]([\S\s]+)\n[ ]{0,3}[|]([ ]*[-:]+[-| :]*)\n((?:(?=([ ]*[|][\S\s]*\n))\4)*)(?=\n|(?![\s\S]))/mg
+              var rgx_leading_pipe = /^[ ]{0,3}[|]([\S\s]+)\n[ ]{0,3}[|]([ ]*[-:]+[-| :]*)\n((?:(?=([ ]*[|][\S\s]*\n))\4)*)(?=\n|(?![\s\S]))/mg;
               text = text.replace( rgx_leading_pipe, _doTable_leadingPipe_callback );
 
-              var rgx_no_leading_pipe = /^[ ]{0,3}(\S[\S\s]*[|][\S\s]*)\n[ ]{0,3}([-:]+[ ]*[|][-| :]*)\n((?:(?=([\S\s]*[|][\S\s]*\n))\4)*)(?=\n|(?![\s\S]))/mg
+              var rgx_no_leading_pipe = /^[ ]{0,3}(\S[\S\s]*[|][\S\s]*)\n[ ]{0,3}([-:]+[ ]*[|][-| :]*)\n((?:(?=([\S\s]*[|][\S\s]*\n))\4)*)(?=\n|(?![\s\S]))/mg;
               text = text.replace( rgx_no_leading_pipe, _DoTable_callback );
 
               return text;

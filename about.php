@@ -1,7 +1,4 @@
-<?php 
-  require_once("./static/src/functions.php"); 
-  require_once("./static/src/session.php");
-?>
+<?php require_once("./static/src/functions.php"); ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,7 +19,7 @@
     </div>
   </header>
   <div id="content" class="container">
-  	<?php the_content(); ?>
+  	<?php the_page("about.php"); ?>
   </div>
 	<div id="push"></div>
 </div>

@@ -35,6 +35,5 @@
 
 @import url("reset.css");
 
-
 #header,#footer{display: none;}
 a:after{content: "(URL: " attr(href) " )";}

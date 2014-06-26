@@ -1,10 +1,11 @@
 <?php
 /**
- * Connection Class
+ * CONNECTION
  * 
+ * Descriptions:
+ *   This unit contains the modular database connection class which forms
+ *   an adapter around the PDO MySQL database.
  * 
- * @author Bitwize
- * @since  1.0
  */
 class Connection {	
 	private $conn = null;
@@ -50,6 +51,25 @@ class Connection {
 		return( $this->conn );
 	}
 	
-	//-------------------------------------------------------------------------
+	/**
+	 * Queries the database, returning an associative array of the results
+	 * 
+	 * @param string $statement The SQL query statement
+	 * @return multitype associative array result of query
+	 */
+	public function query($statement){
+		$i=1;
+		$stmt = $this->conn->prepare( $statement );
+		$argc = func_num_args();
+		$argv = func_get_args();
+		foreach($argv as &$arg){
+			$stmt->bindValue($i,$arg[0],$arg[1]);
+			++$i;
+		}
+		$stmt->setFetchMode( PDO::FETCH_ASSOC );
+		$stmt->execute();
+		return $stmt->fetchAll();
+	}
+
 }
 ?>

@@ -3,18 +3,17 @@
  * FUNCTIONS
  * 
  * Descriptions:
- *   This unit contains all of the required functions for the article system,
- *   both from other units, and also included in this one. 
- *   
- *   Secure Sessions, Page Elements, etc. are all here, included through
- *   their respective php files (organized separately for clarity)
+ *   This unit provides all the basic required features for the CMS's article
+ *   management. It includes features for checking the type of accessed page
+ *   (article, home, or error), accessing the header/footer/content, and
+ *   generating various page-related elements such as breadcrumbs and dynamic
+ *   navigation systems.
  * 
  * Structure:
  *   -------------------------------------------------------------------------
  *   $__globals    Global variable definitions
- *   $__session    
  *   $__elements
- *   $__relations
+ *   $__relations   Page-detail checks
  * 
  */
 
@@ -26,12 +25,6 @@
  
  $g_conn = new Connection("settings.ini"); // Global connection variable
  
- /* __session
- -------------------------------------------------------------------------- */
-  
- // Include session management functions
- require("session.php");
- 
  /* __elements
  -------------------------------------------------------------------------- */
  
@@ -42,27 +35,38 @@
  -------------------------------------------------------------------------- */
  
  /**
-  * 
-  * 
-  * @param number $id  
-  */
- function generate_relationship($id){
- 	
- }
- 
- /**
-  * 
-  */
- function find_parent($id){
- 	
- }
- 
- /**
+  * Find the IDs of the previous ancestors based on the article ID
   * 
   * @param number $id
-  * @param number $depth te
+  * @param number $depth
+  * @return an array of ancestors' ids
+  */
+ function find_ancestors($id, $depth=1){
+ 	global $g_conn;
+
+ 	return {0};
+ }
+ 
+ /**
+  * Find the ID direct parent of the article ID
+  * 
+  * @param number $id
+  * @return parent's article id
+  */
+ function find_parent($id){
+ 	return find_ancestors($id, 1);
+ }
+ 
+ /**
+  * Find the children IDs of the specified article ID
+  * 
+  * @param number $id
+  * @param number $depth
+  * @return an array of children's ids
   */
  function find_children($id, $depth=1){
- 	
+ 	global $g_conn;
+ 	return {0};
  }
+ 
 ?>

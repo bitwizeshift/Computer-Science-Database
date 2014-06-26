@@ -1,8 +1,8 @@
-<?php require_once("common/src/functions.php");?>
+<?php require_once("./static/src/functions.php"); ?>
 <!DOCTYPE html>
 <html>
 <head>
-<?php get_header();?>
+<?php the_header(); ?>
 </head>
 <body>
 <div id="wrapper">
@@ -19,10 +19,10 @@
     </div>
   </header>
   <div id="content" class="container">
-  	<?php get_page_content();?>
+  	<?php the_page("home.php"); ?>
   </div>
 	<div id="push"></div>
 </div>
-<?php get_footer();?>
+<?php the_footer(); ?>
 </body>
 </html>

@@ -1,4 +1,4 @@
-include ./config.mk
+include ./install/config.mk
 
 all: build
 

@@ -1,28 +1,27 @@
-<?php require_once("./static/src/functions.php"); ?>
+<?php 
+require_once('bootstrap.php');
+init_framework();
+
+$page_info = array("title"=>"About",
+		           "authors"=>array("Matthew Rodusel"),
+                   "excerpt"=>"About UCSD",
+                   "is_home"=>true);
+generate_page($page_info);
+?>
 <!DOCTYPE html>
 <html>
 <head>
-<?php the_header(); ?>
+<?php get_meta(); ?>
 </head>
 <body>
 <div id="wrapper">
-  <header id="header">
-    <div id="header-content" class="container">
- 	    <h1 id="logo">
-				<a class="brand" title="Back to Home" href="/" rel="home" itemprop="url">URL</a>
-			</h1>
-			<nav id="navigation">
-			  
-			  <!-- Navigation -->
-			  
-			</nav>
-    </div>
-  </header>
+  <?php get_header(); ?>
   <div id="content" class="container">
-  	<?php the_page("about.php"); ?>
+  	<h2>Some content</h2>
   </div>
 	<div id="push"></div>
 </div>
-<?php the_footer(); ?>
+<?php get_footer(); ?>
 </body>
+
 </html>

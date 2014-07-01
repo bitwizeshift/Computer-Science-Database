@@ -1,0 +1,18 @@
+RewriteBase /ucsd/
+
+# Externally, redirect URLs to end in slashes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !/$
+RewriteCond %{REQUEST_URI} !(.*)/$
+RewriteRule ^(.*)$ $1/ [L,R=301]
+
+# Externally, redirect URLs to end in slashes
+RewriteCond %{THE_REQUEST} ^GET\ /[^?\s]+\.php
+RewriteRule (.*)\.php$ $1/ [L,R=301]
+
+# Interpret URLs of article/<anything> to be article.php?slug=<anything>
+RewriteCond %{REQUEST_URI} ^article/$
+RewriteRule ^article/(.*)/$ article.php?slug=$1 [L]
+
+# Interpret URLs ending in a / as a php file
+RewriteRule (.*)/$ $1.php [L]

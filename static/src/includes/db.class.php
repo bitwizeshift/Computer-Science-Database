@@ -8,21 +8,66 @@
  * 
  */
 class Connection {	
-	private $conn = null;
-
-	//-------------------------------------------------------------------------
 	
+	/**
+	 * Prefix for the database
+	 * 
+	 * @since 1.0
+	 * @var string
+	 */
+	private $db_prefix = "";
+	/** 
+	 * Prefix for the tables 
+	 * 
+	 * @since 1.0
+	 * @var string
+	 */
+	private $table_prefix = "";	
+	
+	/**
+	 * Database handle
+	 * 
+	 * @since 1.0
+	 * @var PDO
+	 */
+	private $dbhandle = null;
+	/**
+	 * The character set
+	 * 
+	 * @var string
+	 */
+	private $charset;
+
+	//------------------------------------------------------------------------
+	
+	/**
+	 * Instantiates a Connection class from the values specified in the
+	 * supplied ini file
+	 * 
+	 * @param string $settings_file name of the .ini file to use for settings
+	 */
 	public function __construct( $settings_file ) {
-		$this->connect($settings_file);
+		register_shutdown_function( array( $this, '__destruct' ) );
+		$this->_connect($settings_file);
 	}
 	
-	//------------------------------------------------------
+	/**
+	 * Destructor for the Connection class
+	 * 
+	 * @return boolean always returns true
+	 */
+	public function __destruct(){
+		return true;
+	}
 	
+	//------------------------------------------------------------------------
+		
 	/**
 	 * Connect to the database from the specified ini file
 	 * 
+	 * @param string $settings_file name of the .ini file to use for settings
 	 */
-	private function connect( $settings_file ) {
+	private function _connect( $settings_file ) {
 		try {
 			if( $settings = parse_ini_file( $settings_file, TRUE ) ) {
 				$dsn = $settings['database']['dsn'];
@@ -37,18 +82,8 @@ class Connection {
 			}
 		} catch( Exception $e ) {
 			print( $e->getMessage() );
+			die();
 		}
-	}
-	
-	//-------------------------------------------------------------------------
-	
-	/**
-	 * Accesses and returns this instance to the connection
-	 * 
-	 * @return PDO connection class
-	 */
-	public function getConnection( ) {
-		return( $this->conn );
 	}
 	
 	/**

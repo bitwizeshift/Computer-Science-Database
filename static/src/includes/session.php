@@ -1,20 +1,18 @@
 <?php
 /**
- * SESSION
- * 
- * Descriptions:
- *   This unit contains the functions used to create, purge, and check secure
- *   sessions.
+ * Handles the creation and parsing of php sessions. Password hashing and
+ * comparisons are also declared here.
  *   
- * Structure:
- *   -------------------------------------------------------------------------
- *   $__session    
- *   $__login
- * 
+ * @author Matthew Rodusek <rodu4140@mylaurier.ca>
+ * @version 0.1 2014-06-30
  */
 
-/* __session
- -------------------------------------------------------------------------- */
+require_resource('user.class.php');
+
+/**
+ * The user object
+ */
+global $user;
 
 /**
  * Opens a secure session for the user
@@ -67,5 +65,38 @@ function validate_login(){
 	
 	
 	return $result;
+}
+
+/**
+ * Create a hash (encrypt) of a plain text password.
+ *
+ * @since 0.1
+ *
+ * @global object $wp_hasher PHPass object
+ * @uses PasswordHash::HashPassword
+ *
+ * @param string $password Plain text user password to hash
+ * @return string The hash string of the password
+ */
+function hash_password($password){
+	global $g_hasher;
+
+	if ( empty($g_hasher) ) {
+		require_resource('phpass.class.php');
+		// Use the portable hash from phpass
+		$g_hasher = new PasswordHash(8, true);
+	}
+
+	return $g_hasher->HashPassword( trim( $password ) );
+}
+
+/**
+ *
+ * @param string $password
+ * @param string $hash
+ * @param string $user_id
+ */
+function check_password($password, $hash, $user_id = ''){
+
 }
 ?>

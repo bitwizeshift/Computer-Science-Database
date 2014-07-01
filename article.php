@@ -1,11 +1,12 @@
 <?php 
-  require_once("./static/src/functions.php"); 
-  require_once("./static/src/session.php");
+require_once('bootstrap.php');
+init_framework();
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-<?php the_header(); ?>
+<?php get_meta(); ?>
 </head>
 <body>
 <div id="wrapper">
@@ -22,10 +23,10 @@
     </div>
   </header>
   <div id="content" class="container">
-  	<?php the_content(); ?>
+	<?php  ?>
   </div>
 	<div id="push"></div>
 </div>
-<?php the_footer(); ?>
+<?php get_footer(); ?>
 </body>
 </html>

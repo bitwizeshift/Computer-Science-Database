@@ -10,6 +10,8 @@ build:
 	@echo ' pwd = "$(DBPASS)"' >> ./static/src/settings.ini
 	echo 'Creating database'
 	@mysql --user=$(DBUSER) --password=$(DBPASS) $(DBNAME) < ./create_tables.sql
+	echo 'Setting up file permissions'
+	@find . -type f -exec chmod 644 {} \; && find . -type d -exec chmod 755 {} \;
 	
 	
         

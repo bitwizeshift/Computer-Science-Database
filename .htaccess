@@ -1,4 +1,32 @@
-RewriteBase /ucsd/
+# Apache htaccess configurations
+#
+# Basic configurations for the database system that provide the following
+# features:
+# - URLs directed to "index.php" are redirected to the root
+# - URLs end in forward slashes ("/")
+# - URLs are interpreted, from install, as "/<page>/<article_slug>"
+#   <page> must be 'article' for 'article_slug' to be valid
+# - As a result of above, 404 errors are handled internally with php.
+#
+# version 1.0 2014-06-30
+# author  Matthew Rodusek <rodu4140@mylaurier.ca>
+#
+
+<IfModule mod_autoindex.c>
+Options -Indexes
+</IfModule>
+
+#<IfModule mod_rewrite.c>
+#Options +FollowSymLinks
+#RewriteEngine On
+
+RewriteBase /~rodu4140/test/
+
+# Removes index.php from URLs
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s(.*)/index\.php [OR,NC]
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s(.*)/index [OR,NC]
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s(.*)/index/ [NC]
+RewriteRule ^ %1 [L,R=301]
 
 # Externally, redirect URLs to end in slashes
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -10,9 +38,12 @@ RewriteRule ^(.*)$ $1/ [L,R=301]
 RewriteCond %{THE_REQUEST} ^GET\ /[^?\s]+\.php
 RewriteRule (.*)\.php$ $1/ [L,R=301]
 
-# Interpret URLs of article/<anything> to be article.php?slug=<anything>
-RewriteCond %{REQUEST_URI} ^article/$
+# Internally Interpret URLs of article/<anything> to be article.php?slug=<anything>
+RewriteCond %{REQUEST_URI} ^(.*)/article/(.*)$
 RewriteRule ^article/(.*)/$ article.php?slug=$1 [L]
 
-# Interpret URLs ending in a / as a php file
+# Internally Interpret URLs ending in a / as a php file
+# (*) This may not be needed 
 RewriteRule (.*)/$ $1.php [L]
+
+#</IfModule>

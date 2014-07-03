@@ -5,6 +5,9 @@
  * The various versions are incremented by 1 every time a 
  * significant change is made to them.
  * 
+ * As of 2014-06-30 this serves no purpose, and exists only
+ * for future-proofing purposes.
+ * 
  * @author Matthew Rodusek <rodu4140@mylaurier.ca>
  * @version 0.1 2014-06-30
  */
@@ -14,7 +17,7 @@
  * 
  * @global string $version
  */
-$GLOBALS['version'] = '0.0.1b';
+$GLOBALS['framework_version'] = '0.0.1b';
 
 /**
  * Holds the database revision version. Increments when 

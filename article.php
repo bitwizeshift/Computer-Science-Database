@@ -1,7 +1,5 @@
 <?php 
 require_once('bootstrap.php');
-init_framework();
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -10,18 +8,7 @@ init_framework();
 </head>
 <body>
 <div id="wrapper">
-  <header id="header">
-    <div id="header-content" class="container">
- 	    <h1 id="logo">
-				<a class="brand" title="Back to Home" href="/" rel="home" itemprop="url">URL</a>
-			</h1>
-			<nav id="navigation">
-			  
-			  <!-- Navigation -->
-			  
-			</nav>
-    </div>
-  </header>
+  <?php get_header(); ?>
   <div id="content" class="container">
 	<?php  ?>
   </div>

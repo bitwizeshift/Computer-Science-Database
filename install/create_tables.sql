@@ -8,6 +8,21 @@ CREATE TABLE ucsd_article(
   `visibility`  INT NOT NULL
 );
 
+# Page Slug table
+CREATE TABLE ucsd_page_slugs(
+	`slug`		VARCHAR(64) NOT NULL PRIMARY KEY,
+	`page_id` 	INT NOT NULL,
+	CONSTRAINT	FOREIGN KEY(`page_id`) REFERENCES ucsd_articles(`id`) ON DELETE CASCADE
+)
+
+# Create page database
+CREATE TABLE ucsd_page(
+  `id`			INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `title`		VARCHAR(64) NOT NULL,
+  `description`	VARCHAR(128),
+  `href`        VARCHAR(128) NOT NULL
+);
+
 # Slug table
 CREATE TABLE ucsd_slugs(
 	`slug`       VARCHAR(64) NOT NULL PRIMARY KEY,

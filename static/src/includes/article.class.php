@@ -218,7 +218,7 @@ class Article{
 	 * @return string
 	 */
 	public function get_excerpt(){
-		return (string) $this->title;
+		return (string) $this->excerpt;
 	}
 	
 	/**

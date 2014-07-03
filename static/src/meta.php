@@ -7,13 +7,13 @@
  * @version 0.1 2014-06-30
  */
 
- echo("<base href='" . BASE . "' target='_blank'><!--[if IE]></base><![endif]-->");
- echo("<title>" . get_title() . "</title>");
+ echo("<base href='" . get_base_url() . "' target='_blank'><!--[if IE]></base><![endif]-->");
+ echo("<title>" . SITENAME . " &raquo " . get_title() . "</title>");
  echo("<meta name='author' content='" . get_authors() . "'>");
  echo("<meta name='description' content='" . get_description() . "'>");
  echo("<meta name='distribution' content='web'>");
  echo("<meta http-equiv='Content-Type' content='text/html;charset=utf-8'>");
- echo("<meta name='application-name' content='TEST'/>");
+ echo("<meta name='application-name' content='" . SITENAME . "'/>");
 ?>
 <meta name='msapplication-TileColor' content='#000000'/>
 <meta name='msapplication-square70x70logo' content='static/img/win8/icon70x70.png'/>

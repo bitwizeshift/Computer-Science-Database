@@ -1,11 +1,8 @@
 <?php 
 require_once('bootstrap.php');
-init_framework();
-
 $page_info = array("title"=>"About",
-		           "authors"=>array("Matthew Rodusel"),
-                   "excerpt"=>"About UCSD",
-                   "is_home"=>true);
+		           "authors"=>array("Matthew Rodusek"),
+                   "excerpt"=>"About UCSD");
 generate_page($page_info);
 ?>
 <!DOCTYPE html>
@@ -23,5 +20,4 @@ generate_page($page_info);
 </div>
 <?php get_footer(); ?>
 </body>
-
 </html>

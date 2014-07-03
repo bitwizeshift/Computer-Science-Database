@@ -18,12 +18,12 @@ class AssetManager{
 	 * Associative array of Mime types based on file suffix 
 	 * @var mixed 
 	 */
-	private static $MIME_TYPES = 
-		array("png" => "image/png",
+	
+	private static $MIME_TYPES = array("png" => "image/png",
 			"jpg" => "image/jpg", "jpeg" => "image/jpg", 
 			"gif" => "image/gif", "bmp" => "image/bmp",
 			"mp3" => "audio/mp3", ""=>"");
-
+	
 	/** 
 	 * The directory (specified from root of installation)
 	 * 
@@ -46,8 +46,8 @@ class AssetManager{
 	 * @param string $asset_directory directory of assets (Relative to root)
 	 */
 	public function __construct( $asset_directory ){
-		register_shutdown_function( array( $this, '__destruct' ) );
-		$this->directory = ROOT . $asset_directory . DIRECTORY_SEPARATOR;
+		//register_shutdown_function( array( $this, '__destruct' ) );
+		//$this->directory = ROOT . $asset_directory . DIRECTORY_SEPARATOR;
 	}
 	
 	/**
@@ -55,7 +55,6 @@ class AssetManager{
 	 * @return boolean
 	 */
 	public function __destruct(){
-		unset($this->directory);
 		return true;
 	}
 	
@@ -80,10 +79,11 @@ class AssetManager{
 		$content['disposition'] = 'attachment; filename="' . $asset_name .'"';
 		
 		return $content;
+		/*
 		header('Content-Type:' . $mime_type);
 		header('Content-Length: ' . filesize($file));
 		header('Content-Disposition: attachment; filename="' . $asset_name .'"');
-		readfile($file);
+		readfile($file);*/
 	}
 	
 	/**

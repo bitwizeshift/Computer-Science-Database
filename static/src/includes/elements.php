@@ -12,13 +12,20 @@
 
 require_resource('article.class.php');
 
-global $article;
-
-if(isset($article)){
-	$article = new Article();
+/**
+ * Loads an article if one has not already been
+ * generated.
+ * 
+ * @global $article Article object
+ */
+function load_article(){
+	if(isset($GLOBALS['article']))
+		return;
+	
+	$GLOBALS['article'] = new Article();
 }
 
-/* __content
+/* Getters
  -------------------------------------------------------------------------- */
 
 /**
@@ -65,17 +72,37 @@ function get_footer($footer=null){
 /**
  * Generate the website's page content
  */
-function get_content(){
+function get_parsed_content(){
+	load_article();
 	global $article;
-	// @todo: Generate content for the website
+	echo($article->get_parsed_content());
 }
 
+/**
+ * Generate the website's raw content
+ */
+function get_raw_content(){
+	load_article();
+	global $article;
+	echo($article->get_raw_content());
+}
+
+/**
+ * Get the article/page's title
+ */
 function get_title(){
+	load_article();
 	global $article;
 	return $article->get_title();
 }
 
+/**
+ * Gets the list of authors as a string
+ * 
+ * @return string comma separated string of authors
+ */
 function get_authors(){
+	load_article();
 	global $article;
 	$authors = $article->get_authors();	
 	$result = "";
@@ -89,18 +116,24 @@ function get_authors(){
 	return $result;
 }
 
+/**
+ * Gets the excerpt of the article
+ */
 function get_description(){
+	load_article();
 	global $article;
 	return $article->get_excerpt();
 }
  
-/* __checks
+/* Checks
  -------------------------------------------------------------------------- */
+
 /**
  * 
  * @return boolean
  */
 function is_home(){
+	load_article();
 	global $article;
 	return (bool) $article->is_home();
 }
@@ -110,6 +143,7 @@ function is_home(){
  * @return boolean
  */
 function is_article(){
+	load_article();
 	global $article;
 	return (bool) $article->is_article();	
 }
@@ -119,6 +153,7 @@ function is_article(){
  * @return boolean
  */
 function is_page(){
+	load_article();
 	global $article;
 	return (bool) $article->is_page();
 }
@@ -128,6 +163,7 @@ function is_page(){
  * @return boolean
  */
 function is_admin(){
+	load_article();
 	global $article;
 	return (bool) $article->is_admin();
 }
@@ -137,6 +173,7 @@ function is_admin(){
  * @return boolean
  */
 function is_404(){
+	load_article();
 	global $article;
 	return (bool) $article->is_404();
 }

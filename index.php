@@ -1,9 +1,7 @@
 <?php 
 require_once('bootstrap.php');
-init_framework();
-
 $page_info = array("title"=>"Home",
-		           "authors"=>array("Matthew Rodusel"),
+		           "authors"=>array("Matthew Rodusek"),
                    "excerpt"=>"The homepage of UCSD",
                    "is_home"=>true);
 generate_page($page_info);

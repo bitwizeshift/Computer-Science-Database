@@ -61,7 +61,7 @@ class Connection {
 	}
 	
 	//------------------------------------------------------------------------
-		
+	
 	/**
 	 * Connect to the database from the specified ini file
 	 * 
@@ -94,7 +94,7 @@ class Connection {
 	 */
 	public function query($statement){
 		$i=1;
-		$stmt = $this->conn->prepare( $statement );
+		$stmt = $this->dbhandle->prepare( $statement );
 		$argc = func_num_args();
 		$argv = func_get_args();
 		foreach($argv as &$arg){
@@ -105,6 +105,22 @@ class Connection {
 		$stmt->execute();
 		return $stmt->fetchAll();
 	}
-
+	
+	/**
+	 * Checks if the table exists
+	 * 
+	 * @param string $table table name
+	 */
+	private function table_exists($table){
+		try {
+			// Check if table is found
+			$result = $this->dbhandle->query("SELECT 1 FROM $table LIMIT 1");
+		} catch (Exception $e) {
+			// Table not found
+			return false;
+		}
+		// Table has been found
+		return $result !== false;
+	}
 }
 ?>

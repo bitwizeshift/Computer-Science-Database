@@ -7,24 +7,42 @@
  */
 class User{
 	
+	/**
+	 * Permission values
+	 * 1: Publish Article
+	 * 2: Review Article
+	 * 3: Upload Files
+	 * 4: Remove Article
+	 * @var mixed (int => string) permission values
+	 */
 	private static $PERMISSIONS = array(1 => "publish", 
 			2 => "review", 3 => "upload",
-			4 => "remove", 5 => "edit");
+			4 => "remove", 5 => "edit",
+	        6 => "add user", 6 => "remove user");
 	
-	/** Can user publish articles? */
+	/** Can user publish articles?  */
 	private $can_publish = false;
-	/** Can user review articles? */
-	private $can_review = false;
-	/** Can user upload articles? */
-	private $can_upload = false;
-	/** Can user remove articles? */
+	
+	/** Can user remove articles?   */
 	private $can_remove = false;
-	/** Can user edit articles? */
+	
+	/** Can user submit articles?   */
+	private $can_submit = false;
+	
+	/** Can user review articles?   */
+	private $can_review = false;
+	
+	/** Can user edit articles?     */
 	private $can_edit = false;
 	
-	/** The user's given username */
+	/** Can user upload articles?   */
+	private $can_upload = false;
+	
+	
+	
+	/** The user's given username   */
 	private $username = "";
-	/** The user's password hash */
+	/** The user's password hash    */
 	private $password_hash = "";
 	/** The user's permission array */
 	private $permissions = array();

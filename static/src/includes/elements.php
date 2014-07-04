@@ -10,7 +10,9 @@
  * @version 0.1 2014-06-30
  */
 
-require_resource('article.class.php');
+load_resource('view.interface.php');
+load_resource('article.class.php');
+load_resource('page.class.php');
 
 /**
  * Loads an article if one has not already been
@@ -18,11 +20,11 @@ require_resource('article.class.php');
  * 
  * @global $article Article object
  */
-function load_article(){
-	if(isset($GLOBALS['article']))
+function load_view(){
+	if(isset($GLOBALS['view']))
 		return;
 	
-	$GLOBALS['article'] = new Article();
+	$GLOBALS['view'] = new Article();
 }
 
 /* Getters
@@ -68,6 +70,9 @@ function get_footer($footer=null){
 		include(SRC . 'footer.php');
 	}
 }
+
+
+
 
 /**
  * Generate the website's page content

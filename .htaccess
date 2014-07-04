@@ -36,14 +36,10 @@ RewriteRule ^(.*)$ $1/ [L,R=301]
 
 # Externally, redirect URLs to end in slashes
 RewriteCond %{THE_REQUEST} ^GET\ /[^?\s]+\.php
-RewriteRule (.*)\.php$ $1/ [L,R=301]
+RewriteRule ^(.*)\.php$ $1/ [L,R=301]
 
 # Internally Interpret URLs of article/<anything> to be article.php?slug=<anything>
-RewriteCond %{REQUEST_URI} ^(.*)/article/(.*)$
-RewriteRule ^article/(.*)/$ article.php?slug=$1 [L]
-
-# Internally Interpret URLs ending in a / as a php file
-# (*) This may not be needed 
-RewriteRule (.*)/$ $1.php [L]
+RewriteRule ^article/(.*)/$ index.php?page=article&slug=$1 [L]
+RewriteRule ^(.*)/$ index.php?page=$1 [L]
 
 #</IfModule>

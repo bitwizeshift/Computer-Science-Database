@@ -2,9 +2,10 @@
 /**
  * The Article class
  * 
- * @since 1.0
+ * @author Matthew Rodusek <rodu4140@mylaurier.ca>
+ * @version 0.2 2014-07-03
  */
-class Article{
+class Article implements View{
 	
 	/** The query for gathering content */
 	private static $CONTENT_QUERY = "";
@@ -21,43 +22,19 @@ class Article{
 	 * @var boolean true if article
 	 */
 	private $is_article = false;
-	/** 
-	 * Is the current page a static page?* 
-	 * 
-	 * @var boolean true if static page
-	 */
-	private $is_page = false;
-	/** 
-	 * Is the current page the homepage?
-	 * 
-	 * @var boolean true if homepage
-	 */
-	private $is_home = false;
-	/** 
-	 * Is the current page a 404 error? 
-	 * 
-	 * @var boolean true if 404 error
-	 */
-	private $is_404 = false;
-	/** 
-	 * Is the current page the admin page? 
-	 * 
-	 * @var boolean true if admin page
-	 */
-	private $is_admin = false;
 	
 	/** 
 	 * Title of the article
 	 * 
 	 *  @var string The title of the article
 	 */
-	private $title = "";
+	private $title = "Untitled";
 	/** 
-	 * Excerpt of the article 
+	 * Description of the article 
 	 * 
 	 * @var string finite sized excerpt from content
 	 */
-	private $excerpt = "";
+	private $description = "No description";
 	/** 
 	 * Raw content of the article 
 	 * 
@@ -75,19 +52,13 @@ class Article{
 	 * 
 	 * @var array strings containing author names
 	 */
-	private $authors = array();
+	private $authors = array("John Doe");
 	/** 
 	 * History of edits 
 	 * 
 	 * @var multitype associative array of (iso-date string->author name)
 	 */
 	private $history = array();
-	/**
-	 * Tags related to this article
-	 *
-	 * @var array strings containing tags
-	 */
-	private $tags = array();
 	/** 
 	 * Date initially created 
 	 * 
@@ -112,96 +83,41 @@ class Article{
 	 * @var array the string slugs of the children
 	 */
 	private $children = array();
-	// -----------------------------------------------------------------------
+	
+	/* Constructor/Destructor
+	 ------------------------------------------------------------------------ */
 	
 	/**
+	 * Constructs the Article object
 	 * 
+	 * @param string $article_slug The slug of the article
 	 */
-	public function __construct($article_info=null){
+	public function __construct( $article_slug ){
 		register_shutdown_function( array( $this, '__destruct' ) );
-		if(!empty($article_info)){
-			$this->_parse_article_info($article_info);
-		}else{
-			$this->_access_article_data();
-		}
+		$this->_access_article_data();
 	}
 	
 	/**
-	 * Parse the article info content 
-	 * 
-	 * @param mixed $article_info
-	 */
-	private function _parse_article_info(&$article_info){
-		// Check if title is set
-		if(isset($article_info['title'])){
-			$this->title = $article_info['title'];
-		}
-		// Check if Excerpt is set
-		if(isset($article_info['excerpt'])){
-			$this->excerpt = $article_info['excerpt'];
-		}
-		// Check if authors is set
-		if(isset($article_info['authors'])){
-			$this->authors = $article_info['authors'];
-		}else{
-			$this->authors = array("Matthew Rodusek");
-		}
-		// Check if is_home is set
-		if(isset($article_info['is_home'])){
-			$this->is_home = $article_info['is_home'];
-		}
-		// Check if is_admin is set
-		if(isset($article_info['is_admin'])){
-			$this->is_admin = $article_info['is_admin']; 
-		}
-		// Check if is_404 is set
-		if(isset($article_info['is_404'])){
-			$this->is_404 = $article_info['is_404'];
-		}
-		
-		$this->is_page = true;
-		
-		// Verify that the values don't conflict
-		if(!$this->_valid_values()){
-			// @TODO: Handle errors
-		}
-	}
-	
-	/**
-	 * Validates the article's values. Throws error if one occurs.
-	 * 
-	 * @return boolean true if values are valid
-	 */
-	private function _valid_values(){
-		return true;
-	}
-	
-	/**
-	 * Gathers article information from the database connection,
-	 * populating the attributes for this class.
-	 */
-	private function _access_article_data(){
-		global $csdb;
-		$slug = $_GET['slug'];
-		
-		// If no article specified (e.g. http://example.com/article/
-		if(!isset($slug)){
-			header("Location: " . BASE);
-			exit();
-		}
-		
-		
-	}
-	
-	/**
-	 * 
+	 * Destructs the Article object
+	 *
 	 * @return boolean
 	 */
 	public function __destruct(){
 		return true;
 	}
 	
-	// -----------------------------------------------------------------------
+
+	/**
+	 * Gathers article information from the database connection,
+	 * populating the attributes for this class.
+	 */
+	private function _access_article_data(){
+		global $csdb, $slug;
+		//TODO: Access article database for information 
+	}
+	
+	/* Getters
+	 ------------------------------------------------------------------------ */
 	
 	/**
 	 * Get the title of this article
@@ -213,18 +129,18 @@ class Article{
 	}
 	
 	/**
-	 * Get the excerpt of this article
+	 * Get the description of this article
 	 * 
-	 * @return string
+	 * @return string the string description 
 	 */
-	public function get_excerpt(){
-		return (string) $this->excerpt;
+	public function get_description(){
+		return (string) $this->description;
 	}
 	
 	/**
 	 * Get the list of authors for this article
 	 * 
-	 * @return array
+	 * @return array list of authors (strings)
 	 */
 	public function get_authors(){
 		return (array) $this->authors;
@@ -233,19 +149,29 @@ class Article{
 	/**
 	 * Get the raw, unparsed MarkDown content
 	 * 
-	 * @return string
+	 * @return string the unparsed MarkDown
 	 */
 	public function get_raw_content(){
 		return (string) $this->raw_content;
 	}
-	
+
 	/**
 	 * Get the parsed HTML content
 	 * 
-	 * @return string
+	 * @return string the parsed HTML
 	 */
 	public function get_parsed_content(){
 		return (string) $this->parsed_content;
+	}
+	
+	/**
+	 * Gets the path to the resource file. Null for articles
+	 *
+	 * @return null
+	 */
+	
+	public function get_resource(){
+		return null;
 	}
 	
 	/**
@@ -293,42 +219,52 @@ class Article{
 		return (array) $this->children;
 	}
 	
-	// -----------------------------------------------------------------------
-	
-	/**
-	 * Is the page a 404 error?
-	 * 
-	 * @return boolean true if 404, false otherwise
-	 */
-	public function is_404(){
-		return (bool) $this->is_404;
-	}
+	/* Getters
+	 ------------------------------------------------------------------------ */
 	
 	/**
 	 * Is the page the home page?
-	 * 
+	 *
 	 * @return boolean true if home page, false otherwise
 	 */
 	public function is_home(){
-		return (bool) $this->is_home;
+		return false;
 	}
 	
 	/**
 	 * Is the page a static web page?
-	 * 
+	 *
 	 * @return boolean true if static page, false otherwise
 	 */
 	public function is_page(){
-		return (bool) $this->is_page;
+		return false;
 	}
 	
 	/**
-	 * Is the page an article page?
-	 * 
-	 * @return boolean true if article, false otherwise
+	 * Is the page an view page?
+	 *
+	 * @return boolean true if view, false otherwise
 	 */
 	public function is_article(){
-		return (bool) $this->is_article;
+		return true;
+	}
+	
+	/**
+	 * Is the page an admin page?
+	 *
+	 * @return boolean true if admin page, false otherwise
+	 */
+	public function is_admin(){
+		return false;
+	}	
+	
+	/**
+	 * Is the page a 404 error?
+	 *
+	 * @return boolean true if 404, false otherwise
+	 */
+	public function is_404(){
+		return false;
 	}
 }
 ?>

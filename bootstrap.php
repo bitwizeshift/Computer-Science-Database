@@ -7,21 +7,33 @@
  * @version 0.2 2014-07-03
  */
 
+# Define constants to standardize the system
+
 /** Define ROOT as the root of the installation */
 define('ROOT', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
+/** Define RESOURCE as the static include directory */
+define('RESOURCE', ROOT . 'static' . DIRECTORY_SEPARATOR);
+
 /** Define SRC as the main src directory */
-define('SRC', ROOT . 'static' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
+define('SRC', RESOURCE . 'src' . DIRECTORY_SEPARATOR);
 
 /** Define INCPATH as the include path (from the src directory) */
 define('INCPATH', 'includes' . DIRECTORY_SEPARATOR);
+
+/** Define THEMEPATH as the path to the theme directory */
+define('THEMEPATH', 'theme' . DIRECTORY_SEPARATOR);
 
 /** Define SITENAME as the name of the website */
 define('SITENAME', 'UCSD');
 
 # Initialize the framework exactly once
+
 if(!defined("INITIALIZED"))
 	init_framework();	
+
+/* Useful methods and functions
+ -------------------------------------------------------------------------- */
 
 /**
  * Generates the URL of the framework installation
@@ -39,39 +51,55 @@ function get_base_url(){
 	return $url;
 }
 
-/**
- * Generates page data for static pages (Non-article pages).
- */
-function generate_page($page_info){
-	$GLOBALS['article'] = new Article($page_info);
-}
+/* Resource loading functions (required)
+ -------------------------------------------------------------------------- */
 
 /**
- * Includes a resource using require_once. 
+ * Registers a page in the system
  * 
- * @since 0.1
- * @param string $file filename
+ * @param string $page the name for the page
+ * @param mixed $page_data Associative array containing page data to register
+ * @global $g_pages Hashmap of Page objects in the form of slug => Page()
  */
-function require_resource( $file ){
-	require_once( SRC . INCPATH . $file );
-}
-
-/**
- * Includes a resource using include_once. 
- * 
- * @since 0.1
- * @param string $file filename
- */
-function include_resource( $file ){
-	include_once( SRC . INCPATH . $file );
-}
-
-function require_theme_resource( $file ){
+function register_page( $page, $page_data ){
+	global $g_pages;
 	
+	$GLOBALS['g_pages'][$page] = new Page( $page_data );
 }
 
 /**
- * Load the correct Database file
+ * Loads a resource from the include path.
+ * 
+ * @param string $resource The resource file to load
+ * @param bool $required (optional) Is the resource a required? (default: true)
+ * @since 0.2
+ */
+function load_resource( $resource, $required=true ){
+	if($required){
+		require_once( SRC . INCPATH . $resource );
+	}else{
+		include_once( SRC . INCPATH . $resource );
+	}
+}
+
+/**
+ * Loads a resource from the theme path.
+ * 
+ * @param string $resource The resource file to load
+ * @param bool $required (optional) Is the resource required? (default: true)
+ * @since 0.2
+ */
+function load_theme_resource( $resource, $required=true ){
+	if($required){
+		require_once( SRC . THEMEPATH . $resource );
+	}else{
+		include_once( SRC . THEMEPATH . $resource );
+	}
+}
+
+
+/**
+ * Load the Database connection
  * 
  * This function is used to set the database class at runtime. It
  * lazyloads the database to insure that only one instance is running
@@ -81,10 +109,10 @@ function require_theme_resource( $file ){
  * @since 0.1
  * @global $csdb Database Object
  */
-function require_database(){
+function load_database(){
 	global $csdb;
 
-	require_resource('db.class.php');
+	load_resource('db.class.php', true);
 	if ( isset( $csdb ) )
 		return;
 	$GLOBALS['csdb'] = new Connection("settings.ini");
@@ -101,14 +129,43 @@ function require_database(){
  * @since 0.2
  * @global $asset AssetManager Object
  */
-function require_asset_manager(){
+function load_asset_manager(){
 	global $asset;
 	
-	require_resource('asset.class.php');
+	load_resource('asset.class.php', true);
 	if( isset( $asset ) )
 		return;
 	$GLOBALS['asset'] = new AssetManager('assets');
 	
+}
+
+/**
+ * Initializes required global variables for the currently requested page.
+ * 
+ * @global $g_view The current View
+ * @global $g_pages The map of all static pages
+ */
+function load_current_view(){
+	global $g_view, $g_pages;
+	
+	// Store page and slug information
+	$page = (isset($_GET['page']) ? $_GET['page'] : 'home');
+	$slug = (isset($_GET['slug']) ? $_GET['slug'] : null );
+	
+	// If an article is specified
+	if( $page=='article' && $slug != null ){
+		$GLOBALS['g_view'] = new Article( $slug );
+		// If the article isn't found
+		if( $g_view->is_404() ){
+			$GLOBALS['g_view'] = $GLOBALS['g_pages']['404'];
+		}
+		// If the pages
+	}elseif( isset($GLOBALS['g_pages'][$page]) ){
+		$GLOBALS['g_view'] = $GLOBALS['g_pages'][$page];
+		// Otherwise the page must be an error
+	}else{
+		$GLOBALS['g_view'] = $GLOBALS['g_pages']['404'];
+	}
 }
 
 /**
@@ -118,30 +175,33 @@ function require_asset_manager(){
  * This function MUST be called once in order for all the related
  * files to be loaded.
  * 
- * @global $g_page The page name
- * @global $g_slug The article slug (should be null for page!=article)
- * @since 0.1
+ * @since 0.2
  */
 function init_framework(){
 	define("INITIALIZED",true);
-	
-	global $g_page, $g_slug;
-
-	# Store global values
-	$GLOBALS['g_page'] = $_GET['page'];
-	$GLOBALS['g_slug'] = $_GET['slug'];
-
-	// Initialize database connections
-	require_database();
-	// Initialize asset manager
-	require_asset_manager();
 
 	// Initialize version information
-	require_resource('version.php');
-	// Add page element functions
-	require_resource('elements.php');
+	load_resource('version.php');
+	
+	// Initialize database connections
+	load_database();
+	// Initialize asset manager
+#	load_asset_manager(); # This does not work..
 	// Add session functions
-	require_resource('session.php');
-	// Add remaining miscellaneous functional features
-	include_resource('functions.php');	
+	load_resource('session.php');
+	// Load resources for View, Article, and Page
+	load_resource('view.interface.php');
+	load_resource('article.class.php');
+	load_resource('page.class.php');
+	// Add theme's resource.php first to override built in
+	load_theme_resource('functions.php', false);
+	// Add non-overridden functions
+	load_resource('functions.php');
+	// Loads the current view information, populating global variables
+	load_current_view();
+
+
+	// Add page element functions
+	load_resource('elements.php');
+	
 }

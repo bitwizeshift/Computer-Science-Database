@@ -27,7 +27,13 @@ define('THEMEPATH', 'theme' . DIRECTORY_SEPARATOR);
 /** Define SITENAME as the name of the website */
 define('SITENAME', 'UCSD');
 
+define('DEBUG',true);
+
 # Initialize the framework exactly once
+if(defined(DEBUG)){
+	error_reporting(E_ALL);
+	ini_set( 'display_errors','1');
+}
 
 if(!defined("INITIALIZED"))
 	init_framework();	
@@ -51,13 +57,24 @@ function get_base_url(){
 	return $url;
 }
 
+/**
+ * Get the current URL of the accessed page
+ * 
+ * @return string the currently accessed URL
+ */
+function get_current_url(){
+	$url =  isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+	$url .= $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	return $url;
+}
+
 /* Resource loading functions (required)
  -------------------------------------------------------------------------- */
 
 /**
  * Registers a page in the system
  * 
- * @param string $page the name for the page
+ * @param string $page the name for the page (the URL)
  * @param mixed $page_data Associative array containing page data to register
  * @global $g_pages Hashmap of Page objects in the form of slug => Page()
  */
@@ -107,15 +124,15 @@ function load_theme_resource( $resource, $required=true ){
  * throughout all the subsystems.
  * 
  * @since 0.1
- * @global $csdb Database Object
+ * @global $g_db Database Object
  */
 function load_database(){
-	global $csdb;
+	global $g_db;
 
 	load_resource('db.class.php', true);
-	if ( isset( $csdb ) )
+	if ( isset( $g_db ) )
 		return;
-	$GLOBALS['csdb'] = new Connection("settings.ini");
+	$GLOBALS['g_db'] = new Connection("settings.ini");
 }
 
 /**
@@ -127,15 +144,15 @@ function load_database(){
  * access throughout all the subsystems
  * 
  * @since 0.2
- * @global $asset AssetManager Object
+ * @global $g_asset AssetManager Object
  */
 function load_asset_manager(){
-	global $asset;
+	global $g_asset;
 	
 	load_resource('asset.class.php', true);
-	if( isset( $asset ) )
+	if( isset( $g_asset ) )
 		return;
-	$GLOBALS['asset'] = new AssetManager('assets');
+	$GLOBALS['g_asset'] = new AssetManager('assets');
 	
 }
 
@@ -168,6 +185,53 @@ function load_current_view(){
 	}
 }
 
+function concat_args( array $args ){
+	$result = "";
+	for($i=0;$i<sizeof($args);$i++){
+		$type = gettype($args[$i]);
+		switch($type){
+		   case "boolean": $arg = $args[$i] ? "true" : "false"; break;
+		   case "integer": $arg = "$args[$i]"; break;
+		   case "double" : $arg = "$args[$i]"; break;
+		   case "string" : $arg = "\"$args[$i]\""; break;
+		   case "array"  : $arg = "array(...)"; break;
+		   case "object" : $arg = "$args[$i]"; break;
+		   case "NULL"   : $arg = "null"; break;
+		   default: $arg = "arg"; 
+		}
+		$result.= $arg;
+		if($i<sizeof($args)-1)
+			$result.=", ";
+	}
+	return $result;
+}
+
+/**
+ * Debug prints the specified function, along with its success
+ * 
+ * @param callable $function
+ * @param unknown $args
+ */
+function debug_function( callable $function, $args ){
+	
+	$result = $function . '(' . concat_args($args) . ')';
+	printf("<pre style='font-family: \"Courier New\", Courier, monospace'>%-45s ", $result);
+	$success = true;
+	echo("&#x2713;  ");
+	try{
+		call_user_func_array( $function, $args );
+	}catch(Exception $e){
+		$sucess = false;
+	}
+	if($success){
+		echo("&#x2713;");
+	}else{
+		echo("x");
+	}
+	echo("</pre>");
+}
+
+
 /**
  * Initializes the entire framework, along with all related global
  * values that should be initialized.
@@ -179,14 +243,12 @@ function load_current_view(){
  */
 function init_framework(){
 	define("INITIALIZED",true);
-
 	// Initialize version information
 	load_resource('version.php');
-	
 	// Initialize database connections
 	load_database();
 	// Initialize asset manager
-#	load_asset_manager(); # This does not work..
+	load_asset_manager();
 	// Add session functions
 	load_resource('session.php');
 	// Load resources for View, Article, and Page
@@ -199,9 +261,8 @@ function init_framework(){
 	load_resource('functions.php');
 	// Loads the current view information, populating global variables
 	load_current_view();
-
-
-	// Add page element functions
-	load_resource('elements.php');
-	
+	// Enable the page template loader
+	load_resource("template.php");
+	// Finally load the template and display the page
+	load_template();
 }

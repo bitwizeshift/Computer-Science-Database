@@ -6,16 +6,7 @@
  * @version 0.2 2014-07-03
  */
 class Article implements View{
-	
-	/** The query for gathering content */
-	private static $CONTENT_QUERY = "";
-	/** The query for finding children  */
-	private static $CHILDREN_QUERY = "";
-	/** The query for finding ancestors */
-	private static $ANCESTOR_QUERY = "";
-	/** The query for gathering history */
-	private static $HISTORY_QUERY = "";
-	
+		
 	/** 
 	 * Is the current page an article? 
 	 * 
@@ -94,7 +85,7 @@ class Article implements View{
 	 */
 	public function __construct( $article_slug ){
 		register_shutdown_function( array( $this, '__destruct' ) );
-		$this->_access_article_data();
+		//$this->_access_article_data();
 	}
 	
 	/**
@@ -112,7 +103,6 @@ class Article implements View{
 	 * populating the attributes for this class.
 	 */
 	private function _access_article_data(){
-		global $csdb, $slug;
 		//TODO: Access article database for information 
 	}
 	
@@ -171,7 +161,34 @@ class Article implements View{
 	 */
 	
 	public function get_resource(){
-		return null;
+		return "article.php";
+	}
+	
+	/**
+	 * Gets the slug of the parent article
+	 *
+	 * @return string slug of parent
+	 */
+	public function get_parent(){
+		return (string) $this->parent;
+	}
+	
+	/**
+	 * Gets the slugs of the child articles
+	 *
+	 * @return array string slugs of children
+	 */
+	public function get_children(){
+		return (array) $this->children;
+	}
+	
+	/**
+	 * Get the edit history. Returns null on Pages
+	 *
+	 * @return null
+	 */
+	public function get_history(){
+		return (array) $this->history;
 	}
 	
 	/**
@@ -199,24 +216,6 @@ class Article implements View{
 	 */
 	public function get_date_created(){
 		return (string) $this->date_created;
-	}
-	
-	/**
-	 * Gets the slug of the parent article
-	 * 
-	 * @return string slug of parent
-	 */
-	public function get_parent(){
-		return (string) $this->parent;
-	}
-	
-	/**
-	 * Gets the slugs of the child articles
-	 * 
-	 * @return array string slugs of children
-	 */
-	public function get_children(){
-		return (array) $this->children;
 	}
 	
 	/* Getters

@@ -7,7 +7,7 @@
  * @version 0.1 2014-06-30
  */
 
-require_resource('user.class.php');
+load_resource('user.class.php');
 
 /**
  * The user object

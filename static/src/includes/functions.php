@@ -23,6 +23,12 @@ $about_data['description'] = "About UCSD";
 $about_data['resource'] = "about.php";
 $about_data['authors'] = array('Matthew Rodusek');
 
+// Search page
+$search_data['title'] = "Search";
+$search_data['description'] = "Search the database";
+$search_data['resource'] = "search.php";
+$search_data['authors'] = array("Matthew Rodusek");
+
 // 404 page data
 $error_data['title'] = "404: Not Found";
 $error_data['description'] = "Error 404: File not found";
@@ -33,6 +39,7 @@ $error_data['is_404'] = true;
 // Register the pages
 register_page( "home", $home_data );
 register_page( "about", $about_data );
+register_page( "search", $search_data );
 register_page( "404", $error_data );
  
 ?>

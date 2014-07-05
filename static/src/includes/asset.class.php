@@ -96,7 +96,7 @@ class AssetManager{
 	 * @param int $height height of the thumbnail
 	 */
 	public function add_thumb_size($identifier, $width, $height){
-		if($width==$height==0)
+		if($width==$height && $height==0)
 			throw new Exception("Invalid thumbnail size specified");
 		$this->thumb_size[$identifier] = array($width, $height);
 	}

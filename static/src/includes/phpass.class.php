@@ -1,13 +1,4 @@
 <?php
-/**
- * Portable PHP password hashing framework.
- * 
- * @package phpass
- * @since 2.5.0
- * @version 0.3
- * @link http://www.openwall.com/phpass/
- */
-
 #
 # Written by Solar Designer <solar at openwall.com> in 2004-2006 and placed in
 # the public domain.  Revised in subsequent years, still public domain.
@@ -28,21 +19,24 @@
 
 /**
  * Portable PHP password hashing framework.
- *
+ * 
  * @package phpass
+ * @since 2.5.0
  * @version 0.3
  * @link http://www.openwall.com/phpass/
- * @since 2.5.0
  */
 class PasswordHash {
-	var $itoa64;
-	var $iteration_count_log2;
-	var $portable_hashes;
-	var $random_state;
+	private $itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+	private $iteration_count_log2;
+	private $portable_hashes;
+	private $random_state;
 
-	function PasswordHash($iteration_count_log2, $portable_hashes)
+	/* Constructor/Destructor
+	 ------------------------------------------------------------------------ */
+	
+	public function __construct($iteration_count_log2, $portable_hashes)
 	{
-		$this->itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+		register_shutdown_function( array( $this, '__destruct' ) );
 
 		if ($iteration_count_log2 < 4 || $iteration_count_log2 > 31)
 			$iteration_count_log2 = 8;
@@ -50,7 +44,11 @@ class PasswordHash {
 
 		$this->portable_hashes = $portable_hashes;
 
-		$this->random_state = microtime() . uniqid(rand(), TRUE); // removed getmypid() for compatibility reasons
+		$this->random_state = microtime() . uniqid(rand(), TRUE);
+	}
+	
+	public function __destruct(){
+		return true;
 	}
 
 	function get_random_bytes($count)

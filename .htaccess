@@ -40,6 +40,17 @@ RewriteRule ^(.*)\.php$ $1/ [L,R=301]
 
 # Internally Interpret URLs of article/<anything> to be article.php?slug=<anything>
 RewriteRule ^article/(.*)/$ index.php?page=article&slug=$1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)/$ index.php?page=$1 [L]
 
 #</IfModule>
+
+# Manually specify error document page to display
+# Future proofing: 
+# ErrorDocument 400 /400/ # Bad Request
+# ErrorDocument 401 /401/ # Unauthorized
+# ErrorDocument 403 /403/ # Forbidden
+# ErrorDocument 404 /404/ # File not found
+# ErrorDocument 500 /500/ # Internal service error

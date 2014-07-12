@@ -8,14 +8,20 @@
 
 ?>
 <header id="header">
-    <div id="header-content" class="container">
- 	    <h1 id="logo">
-				<a class="brand" title="Back to Home" href="." rel="home" itemprop="url">URL</a>
-			</h1>
+	<div id="header-content" class="container">
+		<h1 id="logo">
+			<a class="brand" title="Back to Home" href="." rel="home" itemprop="url">University Computer Science Database</a>
+		</h1>
 			<nav id="navigation">
-			  
-			  <!-- Navigation -->
-			  
-			</nav>
+			<ul>
+				<li><a href="admin">Login</a></li>
+				<li><a href="browse">Browse Articles</a></li>
+				<li><a href="about">About</a></li>
+			</ul>
+			<form class="search-form" action="search" method="GET" class="global-search">
+		        <label class="search-label">Search</label>
+		        <input type="text" name="search" class="search-input" value="" placeholder="Search...">
+			</form>
+		</nav><!-- Navigation -->		
     </div>
 </header>

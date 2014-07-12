@@ -41,5 +41,37 @@ register_page( "home", $home_data );
 register_page( "about", $about_data );
 register_page( "search", $search_data );
 register_page( "404", $error_data );
+
+/**
+ * Registers a page in the system
+ *
+ * @param string $page the name for the page (the URL)
+ * @param mixed $page_data Associative array containing page data to register
+ * @global $g_pages Hashmap of Page objects in the form of slug => Page()
+ */
+function register_page( $page, $page_data ){
+	global $g_pages;
+
+	$GLOBALS['g_pages'][$page] = new Page( $page_data );
+}
+
+/**
+ * Determine if SSL is used.
+ *
+ * @since 0.3
+ *
+ * @return bool True if SSL, false if not used.
+ */
+function is_ssl() {
+	if ( isset($_SERVER['HTTPS']) ) {
+		if ( strtolower($_SERVER['HTTPS']) == 'on' )
+			return true;
+		if ( $_SERVER['HTTPS'] == '1' )
+			return true;
+	} else if ( isset($_SERVER['SERVER_PORT']) && ( $_SERVER['SERVER_PORT'] == '443') ) {
+		return true;
+	}
+	return false;
+}
  
 ?>

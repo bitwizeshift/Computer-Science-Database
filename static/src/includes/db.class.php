@@ -1,11 +1,9 @@
 <?php
 /**
- * CONNECTION
+ * Database connection class
  * 
- * Descriptions:
- *   This unit contains the modular database connection class which forms
- *   an adapter around the PDO MySQL database.
- * 
+ * @author Matthew Rodusek <rodu4140@mylaurier.ca>
+ * @version 0.1 2014-06-30
  */
 class Connection {	
 	
@@ -38,7 +36,8 @@ class Connection {
 	 */
 	private $charset;
 
-	//------------------------------------------------------------------------
+	/* Constructor/Destructor/Initialization
+	 ------------------------------------------------------------------------ */
 	
 	/**
 	 * Instantiates a Connection class from the values specified in the
@@ -59,9 +58,7 @@ class Connection {
 	public function __destruct(){
 		return true;
 	}
-	
-	//------------------------------------------------------------------------
-	
+		
 	/**
 	 * Connect to the database from the specified ini file
 	 * 
@@ -76,7 +73,7 @@ class Connection {
 				$options = array();
 				$options[PDO::ATTR_PERSISTENT] = TRUE;
 				$options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-				$this->conn = new PDO( $dsn, $usr, $pwd, $options );
+				$this->dbhandle = new PDO( $dsn, $usr, $pwd, $options );
 			} else {
 				throw new exception( 'Error: Unable to open settings file.' );
 			}
@@ -86,19 +83,22 @@ class Connection {
 		}
 	}
 	
+	/* Queries/Generation/Existence
+	 ------------------------------------------------------------------------ */
+	
 	/**
 	 * Queries the database, returning an associative array of the results
 	 * 
 	 * @param string $statement The SQL query statement
-	 * @return multitype associative array result of query
+	 * @return multitype array of parameters for the query
 	 */
-	public function query($statement){
+	public function query($statement, $params=array()){
 		$i=1;
-		$stmt = $this->dbhandle->prepare( $statement );
-		$argc = func_num_args();
-		$argv = func_get_args();
-		foreach($argv as &$arg){
-			$stmt->bindValue($i,$arg[0],$arg[1]);
+		$stmt = $this->dbhandle->prepare( $statement );		
+		foreach( (array) $params as &$param){
+			$type = Connection::get_type($param);
+			echo "<p>$type</p>";
+			$stmt->bindValue( $i, $param, $type);
 			++$i;
 		}
 		$stmt->setFetchMode( PDO::FETCH_ASSOC );
@@ -106,12 +106,44 @@ class Connection {
 		return $stmt->fetchAll();
 	}
 	
+	static private function get_type($param){
+		switch(gettype($param)){
+			case "boolean":
+				$result = PDO::PARAM_BOOL;
+				break;
+			case "double": // no break
+			case "string":
+				$result = PDO::PARAM_STR;
+				break;
+			case "integer":
+				$result = PDO::PARAM_INT;
+				break;
+			default:
+				$result = PDO::PARAM_NULL;
+				break;
+		}
+		return $result;
+	}
+	
+	/**
+	 * 
+	 */
+	public function execute( $statement, $params ){
+		try{
+			$stmt = $this->dbhandle->prepare($statement);
+		}catch(PDOException $e){
+			echo "Error caught: " . $e;
+		}
+		return $stmt->execute($params);
+	}
+	
 	/**
 	 * Checks if the table exists
 	 * 
 	 * @param string $table table name
+	 * @return true if table exists
 	 */
-	private function table_exists($table){
+	public function table_exists($table){
 		try {
 			// Check if table is found
 			$result = $this->dbhandle->query("SELECT 1 FROM $table LIMIT 1");

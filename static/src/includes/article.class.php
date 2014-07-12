@@ -85,7 +85,7 @@ class Article implements View{
 	 */
 	public function __construct( $article_slug ){
 		register_shutdown_function( array( $this, '__destruct' ) );
-		//$this->_access_article_data();
+		$this->_access_article_data();
 	}
 	
 	/**
@@ -103,7 +103,9 @@ class Article implements View{
 	 * populating the attributes for this class.
 	 */
 	private function _access_article_data(){
-		//TODO: Access article database for information 
+		global $g_db;
+		
+		
 	}
 	
 	/* Getters

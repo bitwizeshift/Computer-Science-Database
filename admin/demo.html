@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>PageDown Demo Page</title>
+  <base href="http://hopper.wlu.ca/ucsd/" target="_blank">
+  <link rel="stylesheet" type="text/css" href="concept/demo.css" />
+        
+  <script type="text/javascript" src="static/js/Markdown.Converter.js"></script>
+  <script type="text/javascript" src="static/js/Markdown.Sanitizer.js"></script>
+  <script type="text/javascript" src="static/js/Markdown.Editor.js"></script>
+  <!-- Must happen in this order! -->
+	<script type="text/x-mathjax-config;executed=true">
+  MathJax.Hub.Config({
+    showProcessingMessages: false,
+    tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] }
+  });
+	</script>	
+	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script type="text/javascript" src="static/js/mathjax-editing.js"></script>
+  <!-- End -->
+  <link  type="text/css" rel="stylesheet" href="static/css/style.css"/>
+  <style>
+  #header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2em;
+    background-color: #000;
+    z-index: 10;
+  }
+  #sidebar{
+    position: fixed;
+    top: 2em;
+    width: 200px;
+    height: 100%;
+    background-color: #333;
+    z-index: 10;
+  }
+  #wrapper{
+    margin-top: 2em;
+    margin-left: 200px;
+    padding: 20px;
+    min-width: 640px;
+    -webkit-box-shadow: inset 5px 5px 10px rgba(0,0,0,0.5);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
+    
+  }
+  .wmd-panel{
+    margin: 0;
+    patting: 0;
+  }
+  .input{
+    border-radius: 3px;
+    border: 1px solid #aaa;
+    min-width: 640px;
+    width: 100%;
+    max-width: 100%;
+    min-height: 300px;
+  }
+  
+  .output{
+    min-width: 640px;
+    widsth: 100%;
+    max-width: 100%;
+    min-height: 300px;
+  }
+  blockquote{
+    margin: 20px 0;
+    padding: 20px 20px 10px;
+    border-left: 3px solid #444;  
+    background-color: #eee;
+  }
+  blockquote > blockquote{
+    margin: 0;
+    padding: 10px 10px 0;
+  }
+  input{
+    min-width: 640px;
+    width: 100%;
+    max-width: 100%;
+    font-size: 1.5em;
+    padding: 5px 2px;
+    border-radius: 3px;
+    border: 1px solid #aaa;
+  }
+  code{
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+  }
+  pre{
+    margin: 20px 0;
+    padding: 20px;
+    border-left: 3px solid #5bc0de;;  
+    background-color: #f4f8fa;
+  }
+  del{
+    text-decoration: line-through;
+    color: #ff0000;
+  }
+  ul li{
+    list-style: circle outside;
+    margin-left: 20px;
+  }
+  ol li{
+    list-style: decimal outside;
+    margin-left: 20px;
+  }
+  ul, ol{
+    display: block;
+    margin: 10px 0;
+  }
+  </style>
+</head>
+    
+<body>
+  <div id="header">
+  </div>
+  <div id="sidebar">
+  </div>
+  <div id="wrapper">
+    <div class="alert alert-info"><strong>Tip</strong> This would display a tip before submitting (or change to an error message if an error occurs)</div>
+    <h1>Add New Article</h1>
+    <input placeholder="Article Name"></input>
+    <div id="wmd-button-bar"></div>
+    <textarea id="wmd-input" class="input">
+#**Heading 1**: Inline Formatting
+
+**strong**: Done by surrounding any text by two pairs of asterisks (e.g. `**this text is bold**`)
+
+*italics*: Done by surrounding any text by a pair of asterisks (e.g. `*this text is italicized*`)
+
+==deleted==: Done by surrounding any text by a pair of equals (e.g. `==this text is deleted==`)
+
+__underlined__: Done by surrounding any text by a pair of underscores (e.g. `__this text is underlined__`)
+
+\\(Math\\): Done by starting any equation with `\\(` and ending with `\\)` (e.g. `\\(a^2+b^2=c^2)\\)`)
+
+`code`: Done by surrounding any text with backticks (`` ` ``) (e.g. `` `<p>Hello world!</p>` ``)
+
+^superscript^: Done by surrounding any text with carots (`^`) (e.g. `^superscript^`)
+
+_subscript_: Done by surrounding any text with underscores (e.g. `_subscript_`)
+
+##**Heading 2**: Block Formatting
+
+    Block formatted code lines start with 4 spaces
+    Example:
+    
+        void foo(){
+          // do something
+        }
+    
+    (kinda hard to give an example)
+
+>Block-quoted lines start with `>`
+>
+>**Example**
+>
+>    `> This is a blockquote`
+
+Unordered lists are easily done by multiple lines starting with either `-`,`+`, or `*`.
+
+- Unordered list element
+- Unordered list element
+
+**Example**:
+
+    - Unordered list element
+    - Unordered list element
+
+Ordered lists are easily created by writing numbered lines 
+
+1. Element 1
+2. Element 2
+3. Element 3
+
+**Example**
+
+    1. Element 1
+    2. Element 2
+    3. Element 3
+
+Headings are done by starting a line with a pound sign (`#`). The number of `#`s used represents the header used (from 1 to 6) 
+
+**Example**
+
+    #Header 1
+    ##Header 2
+    ###Header 3
+    ####Header 4
+    #####Header 5
+    ######Header 6
+
+Alternatively, headers 1 and 2 may also be done by underlining text
+
+    Header 1
+    ========
+    Header 2
+    --------
+
+Block-Math formatting can be accomplished by putting each equation line between two dollar signs (`$$`).
+
+$$F(x,y)=M(x,y)dx + N(x,y)dy = C$$
+$$F(x,y)=\int M(x,y)dx + \int N(x,y)dy - \iint\frac{\partial{M},\partial{y}}dydx=C$$
+
+**Example**: 
+
+    $$F(x,y)=M(x,y)dx + N(x,y)dy = C$$
+    $$F(x,y)=\int M(x,y)dx + \int N(x,y)dy - \iint\frac{\partial{M},\partial{y}}dydx=C$$
+
+###Heading 3
+
+Pellentesque id luctus erat. Suspendisse laoreet felis ac diam placerat, quis facilisis libero auctor. Sed consequat semper congue. Morbi purus eros, hendrerit a accumsan a, facilisis non mi. In eu tristique mi, fermentum ultricies erat. In vulputate ligula et lacinia rhoncus. Duis faucibus, felis id dapibus fringilla, massa augue commodo lectus, at mattis ante purus pellentesque felis. Duis et sodales elit, nec accumsan nibh. Nam laoreet et sapien eu ultricies. Donec volutpat sed enim sit amet faucibus. Aliquam placerat mauris vitae urna condimentum, non congue lectus convallis. Vestibulum posuere libero vel ante ultricies, in accumsan orci accumsan. Cras at lacus viverra diam auctor sagittis.
+
+####Heading 4
+
+Maecenas accumsan, purus vitae porttitor placerat, ligula ligula elementum nisi, id hendrerit mauris libero et nibh. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam rhoncus porttitor est, quis feugiat orci blandit in. Mauris porta dictum libero, ac lacinia quam vestibulum eget. Donec laoreet id magna quis elementum. Duis quis risus quis leo convallis rutrum. Donec viverra quam massa, lacinia lobortis sapien elementum eget. Quisque suscipit ultrices ipsum, ut luctus lacus consequat non. Aliquam eget convallis diam. Sed sagittis bibendum placerat. Integer auctor ultricies felis, sollicitudin elementum sapien. Vivamus molestie malesuada arcu, id varius nisl porta nec. Phasellus congue elit eget lacinia ultricies.
+
+#####Heading 5
+
+Phasellus sit amet viverra erat. Maecenas porttitor nibh et blandit sodales. Morbi vitae eleifend arcu. Sed mattis diam in rhoncus fermentum. Ut vulputate lacus in condimentum vestibulum. Duis massa nunc, scelerisque sed pharetra nec, ullamcorper sit amet odio. Suspendisse quis convallis mi. Ut libero neque, aliquam tincidunt mi eu, iaculis tempus neque.
+
+######Heading 6
+
+
+</textarea>
+    <div id="wmd-preview" class="output"></div>
+    <script type="text/javascript">
+            (function () {
+            	  var converter = new Markdown.Converter();
+            	  
+            	  converter.hooks.chain("preBlockGamut", function (text, rbg) {
+                      return text.replace(/^ {0,3}""" *\n((?:.*?\n)+?) {0,3}""" *$/gm, function (whole, inner) {
+                          return "<blockquote>" + rbg(inner) + "</blockquote>\n";
+                      });
+                  }); 
+
+                converter.hooks.chain("plainLinkText", function (url) {
+                    return "This is a link to " + url.replace(/^https?:\/\//, "");
+                });
+                
+                var help = function () { alert("Do you need help?"); }
+                var options = {
+                    helpButton: { handler: help },
+                    strings: { quoteexample: "quoted text" }
+                };
+                var editor = new Markdown.Editor(converter, "", options);
+                
+                editor.run();
+                
+                var postfix = "";
+                StackExchange.mathjaxEditing.prepareWmdForMathJax(editor, postfix, [["$", "$"], ["\\\\(","\\\\)"]]);
+            })();
+    </script>
+  </div><!-- #wrapper -->
+  
+</html>

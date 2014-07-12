@@ -1,31 +1,31 @@
 @charset "utf-8";
-/*  GLOBAL ELEMENT STYLES
-*   AUTHOR:	 
-*   DATE:		 2014-05-29 
-*	  VERSION: 1.0.0
-*
-*   STRUCTURE:
-*   --------------------------------------------------------------------------------------------------------------
-*		Page width 					980px
-*   $__reset          Reset browser styles
-*   $__rebuild		    Rebuild browser styles
-*		$__globals		    Global values
-*   $__header			    Header Definitions
-*   $__navigation 	  Navigation Definitions
-*   $__menu           Site Navigation
-*	 	$__content			  Everything within the content
-*		$__footer			    Footer Definitions
-*		$__system-alert   System alert and error messages
-*
------------------------------------------------------------------------------------------------------------------- */
+
+/** GLOBAL STYLES
+ *
+ * AUTHOR:  Matthew Rodusek 
+ * DATE:    2014-07-12 
+ * VERSION: 1.0.0
+ *
+ * STRUCTURE:
+ *  $__reset         Reset browser styles
+ *  $__rebuild       Rebuild browser styles
+ *  $__globals       Global values
+ *  $__header        Header Definitions
+ *  $__navigation    Navigation Definitions
+ *  $__menu          Site Navigation
+ *  $__content       Everything within the content
+ *  $__footer        Footer Definitions
+ *  $__system-alert  System alert and error messages
+ *
+ */
 
 /* __reset
----------------------------------------------------------------------------- */
+--------------------------------------------------------------------------- */
 
 @import url("reset.css");
 
 /* __rebuild
----------------------------------------------------------------------------- */
+--------------------------------------------------------------------------- */
 body{
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 	font-size: 14px;
@@ -47,7 +47,7 @@ h1,h2,h3,h4,h5,h6{
 	color: inherit;
 }
 
-h1, h2{
+h2{
 	border-bottom: 1px solid #ddd;
 	margin-bottom: 10px;
 	padding-bottom: 10px;
@@ -68,10 +68,11 @@ sub { top: 0.4em; }
 #wrapper{
 	min-height: 100%;
   height: auto !important; height: 100%;
-  margin: 0 auto -363px;
+  margin: 0 auto -3em;
 }
 #header, #footer{min-width: 980px;}
-#push, #footer { height: 363px;}
+#push, #footer{ height: 3em;}
+#push{margin-top: 0.714em; }
 
 .alert {
   text-shadow: 0 1px 0 rgba(255,255,255,.2);
@@ -95,13 +96,38 @@ sub { top: 0.4em; }
 .container:before,
 .container:after {display: table; line-height: 0; content: "";}
 .container:after {clear: both;}
-
+hr{
+	border: 0;
+    height: 0;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
+}
 /* __header
 ---------------------------------------------------------------------------- */
-
+#header-content{height: 110px; position: relative;}
+#logo{float: left; height: 80px; position: absolute; left: 0;}
+#logo a{
+	text-indent: -99999px;
+	display: block;
+	height: 80px; width: 80px;
+	background: url("../img/logo-80x80.png") no-repeat left;	
+}
+#navigation{position: absolute; right: 0;}
 
 /* __navigation
 ---------------------------------------------------------------------------- */
+
+#navigation ul li{
+	float: left;
+	margin-right: 10px;
+	border-right: 1px solid #CCC;
+	padding-right: 10px;
+}
+#navigation ul li:last-child{
+	border-right: none;
+}
+#navigation ul{float: left;}
+#navigation .search-form{float: left;}
 
 /* __menu
 ---------------------------------------------------------------------------- */
@@ -109,8 +135,78 @@ sub { top: 0.4em; }
 /* __content
 ---------------------------------------------------------------------------- */
 
+#banner{
+	color: #FFF;
+	position: relative;
+	background-color: black;
+	width: 980px; height: 320px;
+	overflow: hidden;
+}
+
+#banner-content{
+	position: absolute;
+	z-index: 1;
+	right: 0;
+	top: 0;
+	width: 300px; height: 320px;
+	display: table;
+	border-left: 1px solid  rgba(255,255,255,0.4);
+	background-color: rgba(0,0,0,0.4);
+}
+
+.banner-content-inner{
+	margin: auto;
+	display: table-cell;
+	vertical-align: middle;
+	padding: 0 35px;
+}
+
+#update-content{
+	float: left;
+	width: 630px;
+}
+
+#featured-content{
+	float: right;
+	width: 320px;
+}
+
 /* __footer
 ---------------------------------------------------------------------------- */
+#footer{
+	width: 100%;
+}
+#footer-links{
+	border-top: 1px solid #AAA;
+	height: 1.2em;
+	padding-top: 0.8em;
+	padding-bottom: 1em;
+}
+#footer-links a, #footer-links{
+	color: #111;
+	text-transform: uppercase;	
+	text-decoration: none;
+}
+#footer-links a:hover{
+	color: #000;
+	text-decoration: underline;
+}
+#footer-links{
+	font-size: 0.857em;
+}
+#footer-links ul, #footer-links li { float: left; }
+#footer-links li{
+	margin-right: 10px;
+	border-right: 1px solid #CCC;
+	padding-right: 10px;
+}
+#footer-links ul li:last-child{
+	border-right: none;
+}
+#footer-links #copyright{
+	padding: 0; margin: 0;
+	float: right;
+}
 
 /* __system-alert
 ---------------------------------------------------------------------------- */

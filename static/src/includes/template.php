@@ -1,67 +1,118 @@
 <?php
 /**
- * This unit provides all the basic required features for the CMS's article
- * management. It includes features for checking the type of accessed page
- * (article, home, or error), accessing the header/footer/content, and 
- * generating various page-related elements such as breadcrumbs and dynamic
- * navigation systems.
+ * Template Functions.
  * 
- * @author Matthew Rodusek <rodu4140@mylaurier.ca>
+ * 
+ * 
+ * @author  Matthew Rodusek <rodu4140@mylaurier.ca>
  * @version 0.2 2014-07-04
+ * 
+ * @package DevFeed
+ * @subpackage Template
  */
 
 /* Getters: Resource
  -------------------------------------------------------------------------- */
 
-if(!function_exists('get_meta')):
-/**
- * Includes the website's meta information for the website.
- * This will automatically apply information such as the title, description,
- * author, etc.
+/** 
+ * Retrieve the name of the highest priority template file that exists.
  *
- * @param string $meta
- */
-function get_meta($meta=null){
-	if(isset($meta)){
-		load_theme_resource('meta-' . $meta . '.php', false);
-	}else{
-		load_theme_resource('meta.php', false);
-	}
-}
-endif;
-
-if(!function_exists('get_header')):
-/**
- * Includes the header for the website.
+ * Searches in the STYLESHEETPATH before TEMPLATEPATH so that themes which
+ * inherit from a parent theme can just overload one file.
  *
- * @param string $header
+ * @since 0.3
+ *
+ * @param string|array $template_names Template file(s) to search for, in order.
+ * @param bool $load If true the template file will be loaded if it is found.
+ * @param bool $require_once Whether to require_once or require. Default true. Has no effect if $load is false.
+ * @return string The template filename if one is located.
  */
-function get_header($header=null){
-	if(isset($header)){
-		load_theme_resource('header-' . $header . '.php', false);
-	}else{
-		load_theme_resource('header.php', false);
+function locate_template($template_names, $load = false, $require_once = true ) {
+	$located = '';
+	foreach ( (array) $template_names as $template_name ) {
+		if ( !$template_name )
+			continue;
+		if ( file_exists(SRC . $template_name) ) {
+			$located = SRC . $template_name;
+			break;
+		}else if ( file_exists(SRC . THEMEPATH . $template_name) ) {
+			$located = THEME_PATH . $template_name;
+			break;
+		}
 	}
+	if ( $load &&  $located != '' )
+		load_template( $located, $require_once );
+  return $located;
 }
-endif;
 
-if(!function_exists('get_footer')):
 /**
- * Include's the footer for the website.
-*
-* @param string $footer
-*/
-function get_footer($footer=null){
-	if(isset($footer)){
-		load_theme_resource('footer-' . $footer . '.php', false);
+ * Require the template file
+ *
+ * The globals are set up for the template file to ensure that the WordPress
+ * environment is available from within the function. The query variables are
+ * also available.
+ *
+ * @since 1.5.0
+ *
+ * @param string $_template_file Path to template file.
+ * @param bool $require_once Whether to require_once or require. Default true.
+ */
+function load_template( $_template_file, $require_once = true ) {
+	if ( $require_once ){
+		require_once( $_template_file );
 	}else{
-		load_theme_resource('footer.php', false);
+		require( $_template_file );
 	}
 }
-endif;
+
+
 
 /* Getters: Meta
  -------------------------------------------------------------------------- */
+
+function get_site_name(){
+	global $siteinfo;
+	return $siteinfo['name'];
+}
+
+function get_site_info( $show='' ){
+	global $siteinfo;
+	switch( $show ){
+		case 'site_description':
+			$output = $siteinfo['description'];
+			break;
+		case 'site_name':
+			$output = $siteinfo['name'];
+			break;
+		case 'site_url':
+			$output = $siteinfo['url'];
+			break;
+		case 'version':
+			$output = $siteinfo['version'];
+			break;
+		default: 
+			$output = $siteinfo['name']; 
+			break;
+	}
+	
+	return $output;
+}
+
+/**
+ * 
+ * @param string $tag
+ * @param string $string
+ * @return array array of strings
+ */
+function extract_text_from_tags($tag, $string){
+	return preg_match_all("#<{$tag}.*?>([^<]+)</{$tag}>#", $str, $foo);
+}
+
+
+function get_title($separator="&raquo"){
+	global $g_view, $siteinfo;
+	return $siteinfo['name'] . " $separator " . $g_view->get_title();
+}
 
 /**
  * Gets the list of authors as a string
@@ -82,10 +133,7 @@ function get_authors(){
 	return $result;
 }
 
-function get_title($separator="&raquo"){
-	global $g_view;
-	return SITENAME . " $separator " . $g_view->get_title();
-}
+
 
 function get_description(){
 	global $g_view;
@@ -95,15 +143,13 @@ function get_description(){
 /* Getters: Content
  -------------------------------------------------------------------------- */
 
-if(!function_exists('get_raw_content')):
 /**
  * 
  */
 function get_raw_content(){
-	global $view;
+	global $g_view;
 	
 }
-endif;
 /**
  * 
  */
@@ -132,17 +178,6 @@ function is_home(){
 function is_page(){
 	global $g_view;
 	return (bool) $g_view->is_page();
-}
-
-/* Loader
- -------------------------------------------------------------------------- */
-
-/**
- * 
- */
-function load_template(){
-	global $g_view;
-	load_theme_resource($g_view->get_resource());
 }
 
 ?>

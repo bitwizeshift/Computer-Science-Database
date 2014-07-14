@@ -20,9 +20,13 @@ Options -Indexes
 #Options +FollowSymLinks
 #RewriteEngine On
 
-RewriteBase /~rodu4140/test/
+RewriteBase /ucsd/
 
 # Removes index.php from URLs
+
+# Exclude the admin directory
+RewriteRule ^(admin)($|/) - [L]
+
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s(.*)/index\.php [OR,NC]
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s(.*)/index [OR,NC]
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s(.*)/index/ [NC]
@@ -52,5 +56,5 @@ RewriteRule ^(.*)/$ index.php?page=$1 [L]
 # ErrorDocument 400 /400/ # Bad Request
 # ErrorDocument 401 /401/ # Unauthorized
 # ErrorDocument 403 /403/ # Forbidden
-# ErrorDocument 404 /404/ # File not found
+ErrorDocument 404 /404/ 
 # ErrorDocument 500 /500/ # Internal service error

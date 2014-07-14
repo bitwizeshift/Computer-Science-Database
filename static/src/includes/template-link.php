@@ -84,7 +84,7 @@ function get_home_url( $scheme = null ){
 		$url .= $parts[$i] . '/';
 	}
 	*/
-	return site_url( '~rodu4140/test', $scheme );
+	return site_url( 'ucsd', $scheme );
 }
 
 /**

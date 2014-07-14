@@ -9,6 +9,9 @@
 
 require_once( INCLUDE_PATH . 'phpass.class.php');
 
+/* Session starting/ending
+ -------------------------------------------------------------------------- */
+
 /**
  * Starts a secure session for the user to log in
  * 
@@ -16,12 +19,11 @@ require_once( INCLUDE_PATH . 'phpass.class.php');
  * @param string $username The user name
  * @param string $passhash The user pass
  */
-function start_secure_session($id, $username){
-	ob_start();
-	session_start();
+function start_secure_session($id, $username, $display_name){
 	session_regenerate_id();
 	$_SESSION['sess_user_id']  = $id;
 	$_SESSION['sess_username'] = $username;
+	$_SESSION['sess_display_name'] = $display_name;
 	session_write_close();	
 }
 
@@ -29,44 +31,47 @@ function start_secure_session($id, $username){
  * Close Secure Session
  */
 function close_secure_session(){
-	session_start();
+	$_SESSION = array(); // Clear all session values
 	session_destroy();
 }
 
 /**
- * Check to see if a session is set or valid
+ * Check to see if a session is already open
  * 
  * @return boolean True if the session is valid, false otherwise
  */
-function is_valid_session(){
+function is_secure_session(){
 	return isset($_SESSION['sess_user_id']) && (trim($_SESSION['sess_user_id']) != '');
 }
 
-/* __login
+/* Functions to log in
  -------------------------------------------------------------------------- */
 
 /**
- * Validates login based on session variables
+ * Validates login based on session variables.
+ * If the user is valid, it automatically creates a secure session
  * 
  * @return boolean True if valid user
  */
-function validate_login(){
+function validate_login($username, $password){
 	global $g_db;
 	
-	if(!isset($g_db)) 
-		load_database();
+	$result = $g_db->query("SELECT * FROM ucsd_users WHERE username = ? ",$username);
+	if(empty($result))
+		return false;
+
+	$id   = $result[0]['id'];
+	$user = $result[0]['username'];
+	$disp = $result[0]['display_name'];
+	$pass = $result[0]['password'];
+	$salt = $result[0]['salt'];
 	
-	$username = $_POST['username'];
-	$password = $_POST['password'];
+	$check = check_password($password, $salt, $pass);
+
+	if($check)
+		start_secure_session($id, $user, $disp);
 	
-	$result = false;
-	$query = "SELECT id, username, password, salt FROM member WHERE username = ?";
-	
-	$result = $g_db->query($query, array($username, PDO::PARAM_STR));
-	
-	$userpass = hash_password($result['password'],$result['salt']);
-	
-	return $result;
+	return $check;
 }
 
 /**

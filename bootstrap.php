@@ -5,7 +5,11 @@
  * 
  * @author Matthew Rodusek <rodu4140@mylaurier.ca>
  * @version 0.2 2014-07-03
+ * 
+ * @package 
  */
+// Start the session
+session_start();
 
 // Enable error reporting
 error_reporting(E_ALL);

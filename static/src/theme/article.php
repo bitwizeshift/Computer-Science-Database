@@ -7,6 +7,7 @@
 <div id="wrapper">
   <?php get_header(); ?>
   <div id="content" class="container">
+  	<h2><?php get_title(); ?></h2>
   	<p>Load article content here...</p>
   </div>
 	<div id="push"></div>

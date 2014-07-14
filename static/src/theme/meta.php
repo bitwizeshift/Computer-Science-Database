@@ -39,7 +39,7 @@ echo("<link rel='copyright' href='//creativecommons.org/licenses/by-sa/3.0/'>")
 <link rel='icon' type='image/png' href='static/img/icon/favicon.png' />
 <link rel='stylesheet' type='text/css' href='static/css/style.css?ver=0.3' media='screen' />
 <link rel='stylesheet' type='text/css' href='static/css/print.css?ver=1.0' media='print' />
-<link rel='stylesheet' type='text/css' href='static/src/theme/style.css?ver=0.3' media='screen' />
+<link rel='stylesheet' type='text/css' href='<?php echo get_stylesheet_uri('style.css'); ?>' media='screen' />
 <?php 
  if(is_article()){
    echo("<script type='text/javascript' src='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>");

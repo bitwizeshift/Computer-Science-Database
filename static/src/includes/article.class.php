@@ -63,17 +63,31 @@ class Article implements View{
 	 */
 	private $date_modified = "1970-01-01 00:00:00";
 	/**
-	 * The parent article's slug
+	 * The parent article
 	 * 
-	 * @var string the slug of the parent
+	 * @var Article the parent article
 	 */
-	private $parent = "";
+	private $parent = null;
 	/**
-	 * The array of the children's slugs
+	 * The array of the children's Articles
 	 * 
-	 * @var array the string slugs of the children
+	 * @var array the child Articles
 	 */
 	private $children = array();
+	
+	/** Query for the article information */
+	private static $ARTICLE_QUERY = "SELECT article_id, title, parent_id, excerpt, raw_content, parsed_content 
+		FROM ucsd_article WHERE article_id = ?";
+	
+	private static $PARENT_QUERY = "";
+	
+	private static $CHILD_QUERY = "";
+	
+	/** Query for the history of the article */
+	private static $HISTORY_QUERY = "SELECT username, date_modified
+		FROM ucsd_history JOIN ucsd_users
+		WHERE ucsd_history.user_id = ucsd_users.user_id AND ucsd_history.article_id = ?
+		SORT BY date_modified";
 	
 	/* Constructor/Destructor
 	 ------------------------------------------------------------------------ */
@@ -81,11 +95,11 @@ class Article implements View{
 	/**
 	 * Constructs the Article object
 	 * 
-	 * @param string $article_slug The slug of the article
+	 * @param int $article_id the id of the article
 	 */
-	public function __construct( $article_slug ){
+	public function __construct( $article_id ){
 		register_shutdown_function( array( $this, '__destruct' ) );
-		$this->_access_article_data();
+		$this->_access_article_data( $article_id );
 	}
 	
 	/**
@@ -101,10 +115,19 @@ class Article implements View{
 	/**
 	 * Gathers article information from the database connection,
 	 * populating the attributes for this class.
+	 * @param int $id the id of the article
 	 */
-	private function _access_article_data(){
+	private function _access_article_data( $id ){
 		global $g_db;
 		
+		$results = $g_db->query(Article::ARTICLE_QUERY, $slug);
+		$results = $g_db->query(Article::HISTORY_QUERY, $id);
+		
+		$this->parent = new Article( $id );
+		
+		foreach($children as &$child_id){
+			$this->children[] = new Article( $child_id );
+		}
 		
 	}
 	
@@ -167,12 +190,12 @@ class Article implements View{
 	}
 	
 	/**
-	 * Gets the slug of the parent article
+	 * Gets the parent article
 	 *
-	 * @return string slug of parent
+	 * @return Article parent article object. Null if the article has no parent
 	 */
 	public function get_parent(){
-		return (string) $this->parent;
+		return $this->parent;
 	}
 	
 	/**

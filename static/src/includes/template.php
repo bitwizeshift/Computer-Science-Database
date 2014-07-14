@@ -75,6 +75,11 @@ function get_site_name(){
 	return $siteinfo['name'];
 }
 
+function get_stylesheet_uri( $file='style.css' ){
+	$stylesheet_path = SOURCE_DIR . '/' . THEME_DIR . '/' . $file;
+	return $stylesheet_path;
+}
+
 function get_site_info( $show='' ){
 	global $siteinfo;
 	switch( $show ){
@@ -109,9 +114,19 @@ function extract_text_from_tags($tag, $string){
 }
 
 
-function get_title($separator="&raquo"){
+/**
+ * 
+ * @param string $separator
+ * @param string $title
+ * @return string
+ */
+function get_title($separator="&raquo", $title=null){
 	global $g_view, $siteinfo;
-	return $siteinfo['name'] . " $separator " . $g_view->get_title();
+	
+	if(!isset($title))
+		$title = $g_view->get_title();
+	
+	return $siteinfo['name'] . " $separator " . $title;
 }
 
 /**

@@ -76,7 +76,7 @@ interface View{
 	 * @return string ISO-formatted date string
 	 */
 	public function get_date_created();
-	
+		
 	/* Booleans
 	 ------------------------------------------------------------------------ */
 	

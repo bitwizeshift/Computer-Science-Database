@@ -92,7 +92,7 @@ function load_site_info(){
 	
 	$result = $g_db->query("SELECT option_name, option_value FROM ucsd_options");
 	
-	foreach($result as $row){
+	foreach( (array) $result as &$row){
 		$siteinfo[$row['option_name']] = $row['option_value'];
 	}	
 }
@@ -104,7 +104,7 @@ function load_site_info(){
  * @global $g_pages The map of all static pages
  */
 function load_current_view(){
-	global $g_view, $g_pages;
+	global $g_view, $g_pages, $g_db;
 
 	// Store page and slug information
 	$page = (isset($_GET['page']) ? $_GET['page'] : 'home');
@@ -112,9 +112,10 @@ function load_current_view(){
 
 	// If an article is specified
 	if( $page=='article' && $slug != null ){
-		$GLOBALS['g_view'] = new Article( $slug );
-		// If the article isn't found
-		if( $g_view->is_404() ){
+		$result = $g_db->query("SELECT article_id FROM ucsd_slugs WHERE slug = ?", $slug);
+		if(isset($results[0])){
+			$GLOBALS['g_view'] = new Article( $results[0]['id'] );
+		}else{
 			$GLOBALS['g_view'] = $GLOBALS['g_pages']['404'];
 		}
 		// If the pages

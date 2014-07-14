@@ -73,5 +73,27 @@ function is_ssl() {
 	}
 	return false;
 }
+
+/**
+ * Converts a date served from MySQL into a readable string date format
+ *
+ * @param string $format Format of the date to return.
+ * @param string $date Date string from mysql to convert
+ * @return string|int Formatted date string, or Unix timestamp.
+ */
+function convert_mysql_date($format, $date){
+	if(empty( $date ))
+		return null;
+	
+	if($format=='G')
+		return strtotime( $date . ' +0000' );
+	
+	$time = strtotime( $date );
+	
+	if($format=='U')
+		return $time;
+	
+	return date( $format, $date );
+}
  
 ?>

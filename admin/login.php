@@ -1,65 +1,147 @@
 <?php
-	if(isset($_POST['username']) && isset($_POST['password'])){
-		ob_start();
-		session_start();
-		
-		$username = $_POST['username'];
-		$password = $_POST['password'];
-		
-		global $g_db;
-		$result = $g_db->query("SELECT * FROM users WHERE username='$username'",array());
-		
-		if(empty($result)){
-			// Retry logging in
-			header('Location: http://hopper.wlu.ca/~rodu4140/test/admin/');
-			exit();
-		}
-		$id   = $result[0]['id'];
-		$user = $result[0]['username'];
-		$pass = $result[0]['password'];
-		$salt = $result[0]['salt'];
+/**
+ * The main edit screen for the administrators to handle creation
+ * of articles
+ *
+ * @author Matthew Rodusek <rodu4140@mylaurier.ca>
+ * @version 0.4 2014-07-13
+ * 
+ * @package
+ * @subpackage Admin
+ */
 
-		$check = check_password($password, $salt, $pass);
-		
-		if(!$check){
-			header('Location: http://hopper.wlu.ca/~rodu4140/test/admin/');
-			exit();
-		}
-		
-		session_regenerate_id();
-		$_SESSION['sess_user_id']  = $id;
-		$_SESSION['sess_username'] = $username;
-		session_write_close();
-		header('Location: http://hopper.wlu.ca/~rodu4140/test/admin/');
+/* Bootstrap the framework  */
+require_once( dirname(__FILE__) . '/admin-bootstrap.php' );
+
+// If already logged in, redirect to the hub page
+if(is_secure_session())
+	redirect_address( "admin/edit.php" );
+
+$message = null;
+$level = "";
+
+// If an action is present, interpret it
+if(isset($_GET['action'])){
+	$action = $_GET['action'];
+	
+	switch($action){
+		case "logout":
+			$message = "<strong>Info</strong>: Successfully logged out.";
+			$level = "success";
+			break;
 	}
+}
+// If an error message is present, interpret it
+if(isset($_GET['error'])){
+	$error = $_GET['error'];
+	$level = "error";
+	
+	switch($error){
+		case "no_username":
+			$message = "<strong>Error</strong>: The username field was left empty.";
+			break;
+		case "no_password":
+			$message = "<strong>Error</strong>: The password field was left empty.";
+			break;
+		case "invalid_login":
+			$message = "<strong>Error</strong>: Invalid username or password.";
+			break; 
+		default:
+			redirect_address( "admin/login.php" );
+			break;
+	}
+	
+}
+
+// If valid login
+if(isset($_POST['username']) && isset($_POST['password'])){
+	$username = $_POST['username'];
+	$password = $_POST['password'];
+		
+	$valid = validate_login($username, $password);
+		
+	if(!$valid){
+		header('Location: login.php?error=invalid_login');
+		exit();
+	}else{
+		header('Location: edit.php');
+		exit();
+	}
+}
+
+
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel='stylesheet' type='text/css' href='../static/css/style.css?ver=0.3' media='screen' />
 <title>Login Form</title>
+<style>
+.login{
+	background: #f1f1f1;
+}
+#login-form{
+	margin: 20px auto 0;
+	width: 272px;
+	background: #fff;
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,.13);
+	box-shadow: 0 1px 3px rgba(0,0,0,.13);
+	padding: 26px 24px 46px;
+	font-weight: 400;
+	overflow: hidden;
+}
+.input{
+	font-size: 24px;
+	line-height: 1;
+	width: 100%;
+	padding: 3px;
+	margin: 2px 6px 16px 0;
+}
+label{
+	cursor: pointer;
+	color: #777;
+	font-size: 14px;
+}
+.login .callout{
+	width: 274px;
+	margin: 0 auto;
+}
+#login {
+	width: 320px;
+	padding: 10% 0 0;
+	margin: auto;
+}
+</style>
 </head>
  
-<body>
-<form id="form1" name="form1" method="post" action="?action=submit">
-	<table width="510" border="0" align="center">
-		<tr>
-			<td colspan="2">Login Form</td>
-		</tr>
-		<tr>
-			<td>Username:</td>
-			<td><input type="text" name="username" id="username" /></td>
-		</tr>
-		<tr>
-			<td>Password</td>
-			<td><input type="password" name="password" id="password" /></td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td><input type="submit" name="button" id="button" value="Submit" /></td>
-		</tr>
-	</table>
-</form>
+<body class="login">
+
+<div id="login">
+
+	<?php 
+		if($message){
+			echo '<div class="callout callout-' . $level . '" role="alert">' . $message . '</div>';
+		}
+	?>
+	
+	<form name="login-form" id="login-form" method="post" action="?action=submit">
+		<p>
+			<label for="username-input">Username<br>
+			<input type="text" name="username" id="username-input" class="input" value="" size="32"></label>
+		</p>
+		<p>
+			<label for="password-input">Password<br>
+			<input type="password" name="password" id="password-input" class="input" value="" size="32"></label>
+		</p>
+		<p class="submit">
+			<input type="submit" name="submit" id="submit-button" class="button" value="Log In">
+			<!-- <input type="hidden" name="redirect_to" value="">-->
+		</p>
+	</form>
+
+</div>
+
 </body>
 </html>

@@ -8,7 +8,7 @@
  * @author Matthew Rodusek <rodu4140@mylaurier.ca>
  * @version 0.4 2014-07-13
  * 
- * @package
+ * @package AffinityFramework
  * @subpackage Admin
  */
 
@@ -27,7 +27,8 @@ if(!is_secure_session()){
 <?php require('admin-meta.php'); ?>
 </head>
 
-<body>
+<body class="admin dashboard">
+<?php require('admin-header.php'); ?>
 
 </body>
 

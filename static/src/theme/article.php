@@ -7,8 +7,8 @@
 <div id="wrapper">
   <?php get_header(); ?>
   <div id="content" class="container">
-  	<h2><?php get_title(); ?></h2>
-  	<p>Load article content here...</p>
+  	<h2><?= get_title(); ?></h2>
+  	<?php get_content();?>
   </div>
 	<div id="push"></div>
 </div>

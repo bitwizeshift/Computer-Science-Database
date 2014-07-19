@@ -76,18 +76,16 @@ class Article implements View{
 	private $children = array();
 	
 	/** Query for the article information */
-	private static $ARTICLE_QUERY = "SELECT article_id, title, parent_id, excerpt, raw_content, parsed_content 
-		FROM ucsd_article WHERE article_id = ?";
+	const ARTICLE_QUERY = "SELECT title, parent, excerpt, input_content, output_content FROM ucsd_article WHERE id = ?";
 	
-	private static $PARENT_QUERY = "";
+	const PARENT_QUERY = "";
 	
-	private static $CHILD_QUERY = "";
+	const CHILD_QUERY = "";
 	
 	/** Query for the history of the article */
-	private static $HISTORY_QUERY = "SELECT username, date_modified
+	const HISTORY_QUERY = "SELECT display_name, date_modified
 		FROM ucsd_history JOIN ucsd_users
-		WHERE ucsd_history.user_id = ucsd_users.user_id AND ucsd_history.article_id = ?
-		SORT BY date_modified";
+		WHERE ucsd_history.user_id = ucsd_users.id AND ucsd_history.article_id = ?";
 	
 	/* Constructor/Destructor
 	 ------------------------------------------------------------------------ */
@@ -120,14 +118,24 @@ class Article implements View{
 	private function _access_article_data( $id ){
 		global $g_db;
 		
-		$results = $g_db->query(Article::ARTICLE_QUERY, $slug);
-		$results = $g_db->query(Article::HISTORY_QUERY, $id);
+		$this->is_article = true;
+		$result = $g_db->query(Article::ARTICLE_QUERY, $id);
 		
-		$this->parent = new Article( $id );
+		$this->title =          $result[0]['title'];
+		$this->excerpt =        $result[0]['excerpt'];
+		$this->raw_content =    $result[0]['input_content'];
+		$this->parsed_content = $result[0]['output_content'];
 		
-		foreach($children as &$child_id){
-			$this->children[] = new Article( $child_id );
-		}
+		$result = $g_db->query(Article::HISTORY_QUERY, $id);
+		$this->date_modified = $result[0]['date_modified'];
+		$this->date_created  = $result[0]['date_modified'];
+		$this->authors       = array($result[0]['display_name']);
+		
+		#$this->parent = new Article( $id );
+		
+		#foreach($children as &$child_id){
+		#	$this->children[] = new Article( $child_id );
+		#}
 		
 	}
 	

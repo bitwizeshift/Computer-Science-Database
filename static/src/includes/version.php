@@ -15,9 +15,9 @@
 /**
  * Holds the version string for the article system.
  * 
- * @global string $version
+ * @global string $af_version
  */
-$GLOBALS['framework_version'] = '0.0.1b';
+$GLOBALS['af_version'] = '1.0.0';
 
 /**
  * Holds the database revision version. Increments when 
@@ -31,16 +31,16 @@ $GLOBALS['database_version'] = 1;
  * Holds the pagedown revision version. Increments when
  * changes are made to the initial system
  * 
- * @global int $pagedown_version
+ * @global string $pagedown_version
  */
-$GLOBALS['pagedown_version'] = 1;
+$GLOBALS['pagedown_version'] = '1';
 
 /**
  * Holds the required PHP version
  * 
  * @global string $required_php_version
  */
-$GLOBALS['required_php_version'] = '5.3';
+$GLOBALS['required_php_version'] = '5.4';
 
 /**
  * Holds the required MySQL version.

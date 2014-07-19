@@ -1,4 +1,18 @@
 
+CREATE TABLE `ucsd_posts` (
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`title` text NOT NULL,
+	`parent` int(11) NOT NULL,
+	`excerpt` text,
+	`status` char(11) NOT NULL DEFAULT "private",
+	`input_content` longtext,
+	`output_content` longtext,
+	`author_id` int(11) NOT NULL,
+	`modified` DATETIME, 
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`author_id`) REFERENCES ucsd_users(`id`)
+);
+
 CREATE TABLE ucsd_article(
 	`id` INT PRIMARY KEY AUTO_INCREMENT,
 	`title` TEXT NOT NULL,

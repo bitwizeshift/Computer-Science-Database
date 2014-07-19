@@ -4,7 +4,7 @@
 require_once( dirname(__FILE__) . '/admin-bootstrap.php' );
 
 if(!is_secure_session()){
-	header("Location: login.php");
+	redirect_address( 'admin/login.php' );
 }else{
-	header("Location: edit.php");
+	redirect_address( 'admin/dashboard.php' );
 }

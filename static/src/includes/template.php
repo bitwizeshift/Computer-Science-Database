@@ -113,6 +113,13 @@ function extract_text_from_tags($tag, $string){
 	return preg_match_all("#<{$tag}.*?>([^<]+)</{$tag}>#", $str, $foo);
 }
 
+function get_site_title($separator="&raquo"){
+	global $g_view, $siteinfo;
+	
+	$title = $g_view->get_title();
+	
+	return $siteinfo['name'] . " $separator " . $title;
+}
 
 /**
  * 
@@ -120,13 +127,12 @@ function extract_text_from_tags($tag, $string){
  * @param string $title
  * @return string
  */
-function get_title($separator="&raquo", $title=null){
-	global $g_view, $siteinfo;
+function get_title(){
+	global $g_view;
 	
-	if(!isset($title))
-		$title = $g_view->get_title();
+	$title = $g_view->get_title();
 	
-	return $siteinfo['name'] . " $separator " . $title;
+	return $title;
 }
 
 /**
@@ -169,7 +175,8 @@ function get_raw_content(){
  * 
  */
 function get_content(){
-	
+	global $g_view;
+	echo $g_view->get_parsed_content();
 }
 
 /* Comparitors

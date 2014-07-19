@@ -113,8 +113,8 @@ function load_current_view(){
 	// If an article is specified
 	if( $page=='article' && $slug != null ){
 		$result = $g_db->query("SELECT article_id FROM ucsd_slugs WHERE slug = ?", $slug);
-		if(isset($results[0])){
-			$GLOBALS['g_view'] = new Article( $results[0]['id'] );
+		if(isset($result[0]['article_id'])){
+			$GLOBALS['g_view'] = new Article( $result[0]['article_id'] );
 		}else{
 			$GLOBALS['g_view'] = $GLOBALS['g_pages']['404'];
 		}

@@ -3,7 +3,7 @@
  * Database connection class
  * 
  * @author Matthew Rodusek <rodu4140@mylaurier.ca>
- * @version 0.1 2014-06-30
+ * @version 1.0 2014-06-30
  */
 class Connection {	
 	
@@ -21,7 +21,6 @@ class Connection {
 	 * @var string
 	 */
 	private $table_prefix = "";	
-	
 	/**
 	 * Database handle
 	 * 
@@ -34,7 +33,7 @@ class Connection {
 	 * 
 	 * @var string
 	 */
-	private $charset;
+	private $charset = "utf-8";
 
 	/* Constructor/Destructor/Initialization
 	 ------------------------------------------------------------------------ */
@@ -97,7 +96,6 @@ class Connection {
 		$stmt = $this->dbhandle->prepare( $statement );		
 		foreach( (array) $params as &$param){
 			$type = Connection::get_type($param);
-			echo "<p>$type</p>";
 			$stmt->bindValue( $i, $param, $type);
 			++$i;
 		}
@@ -106,6 +104,12 @@ class Connection {
 		return $stmt->fetchAll();
 	}
 	
+	/**
+	 * Get the type of a parameter
+	 * 
+	 * @param mixed $param the parameter to get the type of
+	 * @return number the PDO type
+	 */
 	static private function get_type($param){
 		switch(gettype($param)){
 			case "boolean":
@@ -126,15 +130,17 @@ class Connection {
 	}
 	
 	/**
-	 * 
+	 * Executes the desired statement, returning the number
+	 * of affected rows
 	 */
 	public function execute( $statement, $params ){
 		try{
 			$stmt = $this->dbhandle->prepare($statement);
+			$stmt->execute($params);
 		}catch(PDOException $e){
 			echo "Error caught: " . $e;
 		}
-		return $stmt->execute($params);
+		return $this->dbhandle->lastInsertId();
 	}
 	
 	/**

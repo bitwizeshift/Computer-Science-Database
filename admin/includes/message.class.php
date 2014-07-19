@@ -33,6 +33,16 @@ class Validate{
 	
 }
 
+class Level extends SplEnum{
+	
+	const __default = this::SUCCESS;
+	
+	const SUCCESS = 0;
+	const INFO    = 1;
+	const WARNING = 2;
+	const ERROR   = 3;
+	const SEVERE  = 4;
+}
 
 class Message{
 	

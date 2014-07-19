@@ -15,7 +15,7 @@ require_once( dirname(__FILE__) . '/admin-bootstrap.php' );
 
 // If already logged in, redirect to the hub page
 if(is_secure_session())
-	redirect_address( "admin/edit.php" );
+	redirect_address( "admin/dashboard.php" );
 
 $message = null;
 $level = "";
@@ -61,10 +61,10 @@ if(isset($_POST['username']) && isset($_POST['password'])){
 	$valid = validate_login($username, $password);
 		
 	if(!$valid){
-		header('Location: login.php?error=invalid_login');
+		redirect_address( 'admin/login.php?error=invalid_login' );
 		exit();
 	}else{
-		header('Location: edit.php');
+		redirect_address( 'admin/dashboard.php' );
 		exit();
 	}
 }
@@ -126,7 +126,7 @@ label{
 		}
 	?>
 	
-	<form name="login-form" id="login-form" method="post" action="?action=submit">
+	<form name="login-form" id="login-form" method="post" action="?action=submit" target="_self">
 		<p>
 			<label for="username-input">Username<br>
 			<input type="text" name="username" id="username-input" class="input" value="" size="32"></label>

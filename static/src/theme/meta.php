@@ -9,13 +9,13 @@
 
 // 
 echo("<base href='" . get_home_url() . "'><!--[if IE]></base><![endif]-->");
-echo("<title>" . get_title() . "</title>");
+echo("<title>" . get_site_title() . "</title>");
 // Base meta tags
 echo("<meta name='author' content='" . get_authors() . "'>");
 echo("<meta name='description' content='" . get_description() . "'>");
 echo("<meta name='application-name' content='" . get_site_name() . "'/>");
 echo("<meta name='distribution' content='web'>");
-echo("<meta name='generator' content='Framework0.3'");
+echo("<meta name='generator' content='Framework0.3'>");
 // OpenGraph Tags
 echo("<meta name='og:type' content='website'>");
 echo("<meta name='og:title' content='" . get_title() ."'>");
@@ -32,19 +32,17 @@ echo("<meta name='og:url' content='" . get_current_url() . "'>");
 <meta http-equiv='Content-Type' content='text/html;charset=utf-8'>
 <?php 
 echo("<link rel='canonical' href='" . get_current_url() . "'/>");
-echo("<link rel='copyright' href='//creativecommons.org/licenses/by-sa/3.0/'>")
 ?>
 <link rel='apple-touch-icon' type='static/img/icon/apple-touch.png' />
 <link rel='icon' type='image/x-icon' href='static/img/icon/favicon.ico' />
 <link rel='icon' type='image/png' href='static/img/icon/favicon.png' />
-<link rel='stylesheet' type='text/css' href='static/css/style.css?ver=0.3' media='screen' />
+<link rel='stylesheet' type='text/css' href='static/css/common.css?ver=1.0' />
+<link rel='stylesheet' type='text/css' href='static/css/style.css?ver=1.0' media='screen' />
 <link rel='stylesheet' type='text/css' href='static/css/print.css?ver=1.0' media='print' />
 <link rel='stylesheet' type='text/css' href='<?php echo get_stylesheet_uri('style.css'); ?>' media='screen' />
-<?php 
- if(is_article()){
-   echo("<script type='text/javascript' src='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>");
- }
-?>
+<?php if(is_article()){ ?>
+	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<?php }?>
 <!--[if lt IE 9]>
 	<script src="static/js/IE9.js"></script>
 	<script src="statics/js/html5shiv.js"></script>

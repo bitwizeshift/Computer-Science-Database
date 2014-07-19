@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * The administration functions.
+ *
+ * 
+ *
+ * @author Matthew Rodusek <rodu4140@mylaurier.ca>
+ * @version 0.4 2014-07-19
+ *
+ * @package AffinityFramework
+ * @subpackage Admin
+ */
 function if_error(){
 	return isset($_GET['err']);
 }
@@ -27,6 +37,16 @@ function redirect_address( $page, $delay=0){
 		header("Location: {$url}");
 	}
 	exit();	
+}
+
+function title_to_slug($title){
+	$special_chars = array("/","\\","*","%","$","#");
+	$slug = trim($title);
+	$slug = strtolower($slug);
+	$slug = str_replace(" ", "_", $slug);
+	$slug = str_replace($special_chars,'',$slug);
+	$slug = substr($slug,0,100);
+	return $slug;
 }
 
 ?>

@@ -1,16 +1,53 @@
 @charset "utf-8";
+/** ADMIN STYLES
+ *
+ * AUTHOR:  Matthew Rodusek 
+ * DATE:    2014-07-12 
+ * VERSION: 1.0.0
+ *
+ */
+ 
+/* Admin header stuffs
+--------------------------------------------------------------------------- */
 
-body 
-{ 
-	background-color: White;
-    font-family: sans-serif;
+.admin>#header{
+	background: #222;
+	height: 35px;
+	margin-bottom: 20px;
+}
+.admin>#header>#header-content{
+	height: 100%;
+}
+.admin>#header a{
+	color: #bbbbbb;
+	text-decoration: none;
+	display: inline-block;
+	height: 35px;
+	line-height: 35px;
+	padding: 0 10px;
+}
+.admin>#header a:hover{
+	color: #eee;
+	background: #333;
+}
+.admin>#header a.home{
+	background: url(spriteset.png) no-repeat;
+	text-indent: -9999px;
+	width: 35px;
+	height: 35px;
+	padding: 0;
+}
+.admin>#header a.home:hover{
+	background-position: 0 -35px;
+}
+.heading{
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
 }
 
-blockquote {
-	border-left: 2px dotted #888;
-	padding-left: 5px;
-	background: #d0f0ff;
-}
+/* Pagedown Editor Styles
+--------------------------------------------------------------------------- */
 
 .wmd-panel
 {
@@ -123,16 +160,9 @@ blockquote {
 	font-size: 0.8em;
 	font-weight: bold;
 }
-#admin-header{
-	clear: both;
-	height: 20px;
-	width: 100%;
-	min-width:100%;
-	background: #000;
-}
-.hidden{
-	display: none;
-}
+
+
+
 
 #sidebar{
 	position: fixed;
@@ -141,10 +171,6 @@ blockquote {
 	height: 100%;
 	background-color: #333;
 	z-index: 10;
-}
-#wrapper{
-	-webkit-box-shadow: inset 5px 5px 10px rgba(0,0,0,0.5);
-	box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
 }
 .wmd-panel{
 	margin: 0;
@@ -173,3 +199,4 @@ input{
 	border-radius: 3px;
 	border: 1px solid #aaa;
 }
+

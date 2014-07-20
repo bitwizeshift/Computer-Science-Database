@@ -18,75 +18,86 @@ if(!is_secure_session()){
 	redirect_address( "admin/login.php" );
 }
 
+set_message(Message::INFO,"This area will display tips or errors.");
+
 $title = "";
 $input = "";
 
 if(isset($_GET['id'])){
 	global $g_db;
 	$id = $_GET['id'];
-	$result = $g_db->query("SELECT title, input_content FROM `ucsd_posts` WHERE id = ?", $id);
+	$result = $g_db->query("SELECT title, input_content FROM `ucsd_posts` WHERE id = ? AND status=\"POST\"", $id);
 	// If it's not found, just add new article
 	if(!isset($result[0])) 
 		redirect_address( "admin/post-edit.php");
 	
 	$title = $result[0]['title'];
 	$input = $result[0]['input_content'];
-	
 }
-	
+// If submitting a post
 if(isset($_GET['action']) && $_GET['action']=='submit'){
 	global $g_db;
+	
+	clear_messages();
 	
 	// Get article information
 	$title   = $_POST['title'];
 	$input   = $_POST['input-content'];
 	$output  = $_POST['output-content'];
+	$parent  = 0; #$_POST['parent'];
 	$user_id = $_SESSION['sess_user_id'];
 	$time    = date( 'Y-m-d H:i:s', time() );
 	$slug    = title_to_slug($title);
 	$excerpt = "";
-	$parent  = 0;
 	$status  = "POST";
 	
-	// Create the original POST to publish
 	$vars    = array(
 			":title"  => $title,
-			":parent" => $parent, 
-			":excerpt"=> $excerpt, 
-			":status" => $status, 
-			":input"  => $input, 
-			":output" => $output, 
-			":user_id"=> $user_id, 
+			":parent" => $parent,
+			":excerpt"=> $excerpt,
+			":status" => $status,
+			":input"  => $input,
+			":output" => $output,
+			":user_id"=> $user_id,
 			":date"   => $time);
-	$stmt = "INSERT INTO `ucsd_posts`(`title`,`parent`,`excerpt`,`status`,`input_content`,`output_content`,`author_id`,`modified`) 
+	
+	if(isset($_GET['id'])){
+		$vars[':id'] = (int) $_GET['id'];
+		$stmt = "UPDATE `ucsd_posts` 
+				SET `title`=:title, `parent`=:parent, `excerpt`=:excerpt, `status`=:status, 
+					`input_content`=:input,	`output_content`=:output, `author_id`=:user_id, `modified`=:date
+				WHERE `id`=:id";
+	}else{
+		$stmt = "INSERT INTO `ucsd_posts`(`title`,`parent`,`excerpt`,`status`,`input_content`,`output_content`,`author_id`,`modified`)
 			           VALUES(:title,:parent,:excerpt,:status,:input,:output,:user_id,:date)";
+	}
+	// Create the original POST to publish
 	$id = $g_db->execute($stmt, $vars);
+	if(isset($_GET['id']))
+		$id = (int) $_GET['id'];
+	
+	$stmt = "INSERT INTO `ucsd_posts`(`title`,`parent`,`excerpt`,`status`,`input_content`,`output_content`,`author_id`,`modified`)
+			           VALUES(:title,:parent,:excerpt,:status,:input,:output,:user_id,:date)";
 	
 	// Create the first REVISION of the article
+	if(isset($vars[':id'])) unset($vars[':id']);
 	$vars[':status'] = "REVISION";
 	$vars[':parent'] = $id;
 	$g_db->execute($stmt, $vars);
 	
-	// Create the slug for the article
-	$vars = array(
-		":slug"       => $slug,
-		":article_id" => $id
-	);
-	$stmt = "INSERT INTO ucsd_slugs(slug, article_id) VALUES(:slug, :article_id)";
-	$g_db->execute($stmt, $vars);
+	if(isset($_GET['id'])){
+		// Create the slug for the article
+		$vars = array(
+			":slug"       => $slug,
+			":article_id" => $id
+		);
+		$stmt = "INSERT INTO ucsd_slugs(slug, article_id) VALUES(:slug, :article_id)";
+		$g_db->execute($stmt, $vars);
+	}
+	
+	set_message(Message::SUCCESS, "Article posted successfully");
 	
 }
-
-function add_new_article($slug, $title, $input, $output){
-	global $g_db;
-	
-	
-}
-
-function edit_article($id, $slug, $title, $input, $output){
-	global $g_db;
-}
-
 ?>
 
 
@@ -113,18 +124,31 @@ function edit_article($id, $slug, $title, $input, $output){
 <body class="admin post edit">
 	<?php require('admin-header.php'); ?>
 	<div id="wrapper">
-		<div id="edit-content" class="container">
-			<div class="alert alert-info"><strong>Tip</strong> This would display a tip before submitting (or change to an error message if an error occurs)</div>
-			<h1>Add New Article</h1>
-			<form name="wmd-form" id="wmd-form" method="post" action="admin/post-edit.php?action=submit" target="_self">
-				<input type="text" name="title" id="wmd-title-input" placeholder="Article Title" value="<?=$title;?>" oninput="copyTitle()">
-				<div id="wmd-button-bar"></div>
-				<textarea name="input-content" id="wmd-input" class="input"><?=$input;?></textarea>
-				<textarea name="output-content" id="wmd-output" class="removed"></textarea>
-		    	<input type="submit" name="submit" id="wmd-submit" class="button" value="Publish" onclick="saveParsedContent();">
-    		</form>
-    		<h2 id="wmd-preview-title"><?=$title; ?></h2>
-			<div id="wmd-preview" class="output"></div>
+		<div id="content" class="container">
+			<?php print_messages(0); ?>
+			
+			<div class="panel">
+				<?php if(isset($_GET['id'])){?>
+					<h2 class="heading">Edit Article</h2>
+				<?php }else{ ?>
+					<h2 class="heading">Add New Article</h2>
+				<?php }?>
+				<form name="wmd-form" id="wmd-form" method="post" action="admin/post-edit.php?action=submit<?= isset($_GET['id']) ? "&id={$_GET['id']}" : ""; ?>" target="_self">
+					<input type="text" name="title" id="wmd-title-input" placeholder="Article Title" value="<?=$title;?>" oninput="copyTitle()">
+					<div id="wmd-button-bar"></div>
+					<textarea name="input-content" id="wmd-input" class="input"><?=$input;?></textarea>
+					<textarea name="output-content" id="wmd-output" class="removed"></textarea>
+					<p>
+						<label for="wmd-parent-input">Parent<br>
+						<input type="text" name="parent" id="wmd-parent-input" class="full-size"></label>
+					</p>
+			    	<input type="submit" name="submit" id="wmd-submit" class="button" value="Publish" onclick="saveParsedContent();">
+	    		</form>
+	    	</div><!-- .panel -->
+	    	<div class="panel">
+	    		<h2 id="wmd-preview-title" class="heading"><?=$title; ?></h2>
+				<div id="wmd-preview" class="output"></div>
+			</div><!-- .panel -->
 			<script type="text/javascript">
 		(function () {
 			var converter = new Markdown.Converter();

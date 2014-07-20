@@ -15,20 +15,25 @@
 /* Bootstrap the framework  */
 require_once( dirname(__FILE__) . '/admin-bootstrap.php' );
 
-$per_page = 10;
-if(!is_secure_session()){
+// Redirect to login page if not currently logged in
+if(!is_secure_session())
 	redirect_address( "admin/login.php" );
-}
-
-$page = isset($_GET['page']) ? intval($_GET['page']) * $per_page : 0;
 
 global $g_db;
+
+$per_page = (int) http_value("GET", "ppp", 10);
+$page     = (int) http_value("GET", "page",1);
+$page     = $page < 1 ? 1 : $page;
+$index = ($page-1) * $per_page;
+
 $stmt = "SELECT ucsd_posts.id,`title`,`display_name`,`modified` 
 		 FROM `ucsd_posts` JOIN `ucsd_users` 
 		 WHERE ucsd_posts.author_id = ucsd_users.id AND ucsd_posts.status = \"POST\"
 		 LIMIT ?,?";
-$result = $g_db->query($stmt, array($page, $per_page));
 
+$posts = $g_db->query($stmt, array($index, $per_page));
+$r = $g_db->query("SELECT count(id) AS count FROM ucsd_posts WHERE status = \"POST\" ");
+$total = $r[0]['count'];
 ?>
 
 <!DOCTYPE html>
@@ -41,32 +46,33 @@ $result = $g_db->query($stmt, array($page, $per_page));
 <?php require('admin-header.php'); ?>
 <div id="wrapper">
 	<div id="content" class="container">
-	<h2 class="heading">Posts <a class="link" href="admin/post-edit.php">Add New</a></h2>
-<?php /* Add new article option*/ ?>
-<?php /* Current articles for page number */ ?>
-<table class='table table-striped table-bordered'>
-	<thead>
-		<tr>
-			<th>Title</th>
-			<th>Author</th>
-			<th>Date</th>
-		</tr>
-	</thead>
-	<tbody>
+	<div class="panel">
+		<h2 class="heading">Posts <a class="link" href="admin/post-edit.php">Add New</a></h2>
+		<table class='table table-striped table-bordered'>
+		<thead>
+			<tr>
+				<th id="col_title">Title</th>
+				<th id="col_author">Author</th>
+				<th id="col_date">Date Modified</th>
+			</tr>
+		</thead>
+		<tbody>
 <?php 
-foreach( (array) $result as &$row){
+foreach( (array) $posts as &$post){
 	echo("<tr>");
-	echo("<td><a href='admin/post-edit.php?id={$row['id']}'>{$row['title']}</a></td>");
-	echo("<td>{$row['display_name']}</td>");
-	echo("<td><time datetime='{$row['modified']}'>"  . date("F jS, Y.  h:i:sa",strtotime($row['modified'])) . "</time></td>");
+	echo("<td><a href='admin/post-edit.php?id={$post['id']}'>{$post['title']}</a></td>");
+	echo("<td>{$post['display_name']}</td>");
+	echo("<td><time datetime='{$post['modified']}'>"  . date("F jS, Y",strtotime($post['modified'])) . "</time>" . "<small>" . date("h:i:sa",strtotime($post['modified'])) . "</small></td>");
 	echo("</tr>");
 }
 ?>
-	</tbody>
-</table>
+		</tbody>
+	</table>
+	<?php generate_pagination($page, $total, $per_page) ?>
+	</div>
 </div>
 </div>
-<?php /* Select page number */ ?>
+
 
 </body>
 </html>

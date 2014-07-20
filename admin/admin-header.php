@@ -16,9 +16,11 @@
 		<nav class="navigation">
 			<ul id="admin-nav" class="left">
 				<li><a class="home"      href="<?= get_home_url(); ?>">Home</a></li>
-				<li><a class="dashboard" href="admin/dashboard.php">Dashboard</a></li>
-				<li><a class="post"      href="admin/post.php">Post</a></li>
-				<li><a class="page"      href="admin/page.php">Page</a></li>
+				<li><a href="admin/dashboard.php">Dashboard</a></li>
+				<li><a href="admin/post.php">Post</a></li>
+				<li><a class="disabled" href="admin/page.php">Page</a></li>
+				<li><a class="disabled" href="admin/assets.php">Assets</a></li>
+				<li><a class="disabled" href="admin/users.php">Users</a></li>
 			</ul>
 			<ul id="account-nav" class="right">
 				<li><a class="account" href="admin/account.php"><?= $_SESSION['sess_display_name'] ?></a></li>

@@ -6,6 +6,10 @@
  * VERSION: 1.0.0
  *
  */
+
+body{
+	background: #e6e6e6;
+}
  
 /* Admin header stuffs
 --------------------------------------------------------------------------- */
@@ -32,6 +36,7 @@
 }
 .admin>#header a.home{
 	background: url(spriteset.png) no-repeat;
+	margin-right: 10px;
 	text-indent: -9999px;
 	width: 35px;
 	height: 35px;
@@ -40,15 +45,48 @@
 .admin>#header a.home:hover{
 	background-position: 0 -35px;
 }
-.heading{
-	margin-bottom: 20px;
-	padding-bottom: 10px;
-	border-bottom: 1px solid #eee;
+
+/* Login Form information
+--------------------------------------------------------------------------- */
+
+#login-form{
+	margin: 20px auto 0;
+	background: #fff;
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,.13);
+	box-shadow: 0 1px 3px rgba(0,0,0,.13);
+	padding: 26px 24px 46px;
+	font-weight: 400;
+	overflow: hidden;
+}
+.login .callout{
+	width: 284px;
+	margin: 0 auto;
+}
+#login {
+	width: 320px;
+	padding: 10% 0 0;
+	margin: auto;
+}
+
+.login input[type="text"],
+.login input[type="password"]{
+	font-size: 1.5em;
+	width: 270px;
 }
 
 /* Pagedown Editor Styles
 --------------------------------------------------------------------------- */
 
+#wmd-form{
+	margin-bottom: 15px;
+}
+#wmd-title-input{
+	width: 100%;
+}
+#wmd-input{
+	width: 100%;
+	height: 300px;
+}
 .wmd-panel
 {
 	margin-left: 25%;
@@ -179,11 +217,7 @@
 .input{
 	border-radius: 3px;
 	border: 1px solid #aaa;
-	min-width: 640px;
-	width: 100%;
-	max-width: 100%;
-	min-height: 300px;
-	}
+}
 .output{
 	min-width: 640px;
 	width: 100%;
@@ -191,12 +225,15 @@
 	min-height: 300px;
 }
 input{
-	min-width: 640px;
-	width: 100%;
-	max-width: 100%;
 	font-size: 1.5em;
 	padding: 5px 2px;
 	border-radius: 3px;
 	border: 1px solid #aaa;
 }
+#col_title{}
+#col_author{width: 150px;}
+#col_date{width:150px;}
 
+small{
+	color: #777;
+}

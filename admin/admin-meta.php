@@ -24,6 +24,7 @@ MathJax.Hub.Config({
 </script>	
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/javascript" src="static/js/mathjax-editing.js"></script>
+<script type="text/javascript" src="static/js/autosuggest.js"></script>
 <!-- End -->
 <link rel="stylesheet" type="text/css" href="static/css/common.css?ver=1.0" />
 <link rel="stylesheet" type="text/css" href="admin/css/style.css?ver=1.0"/>

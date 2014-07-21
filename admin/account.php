@@ -23,6 +23,7 @@ if(!is_secure_session()){
 <!DOCTYPE html>
 <html>
 <head>
+<title>Your Account</title>
 <?php require('admin-meta.php'); ?>
 </head>
 

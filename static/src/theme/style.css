@@ -19,5 +19,69 @@
  *
  */
  
- body{background-color: #e6e6e6;}
- #content{background-color: #fff;}
+body{background-color: #e6e6e6;}
+
+
+#banner{
+	color: #FFF;
+	position: relative;
+	background-color: black;
+	width: 980px; height: 320px;
+	overflow: hidden;
+	margin-bottom: 20px;
+}
+
+/* Header
+---------------------------------------------------------------------------- */
+
+#header{
+	background: #fff;
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
+	margin-bottom: 20px;
+}
+#header-content{height: 90px; position: relative;}
+
+/* Content
+---------------------------------------------------------------------------- */
+
+
+
+/* Footer
+---------------------------------------------------------------------------- */
+
+#footer{
+	background: #fff;
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
+	width: 100%;
+	min-width: 100%;
+}
+#footer-links{
+	height: 1.2em;
+	padding-top: 1em;
+	padding-bottom: 1em;
+}
+#footer-links a, #footer-links{
+	color: #111;
+	text-transform: uppercase;	
+	text-decoration: none;
+}
+#footer-links a:hover{
+	color: #000;
+	text-decoration: underline;
+}
+#footer-links{
+	font-size: 0.857em;
+}
+#footer-links ul, #footer-links li { float: left; }
+#footer-links li{
+	margin-right: 10px;
+	border-right: 1px solid #CCC;
+	padding-right: 10px;
+}
+#footer-links ul li:last-child{
+	border-right: none;
+}
+#footer-links #copyright{
+	padding: 0; margin: 0;
+	float: right;
+}

@@ -51,7 +51,6 @@ if(isset($_GET['action']) && $_GET['action']=="submit"){
 </head>
  
 <body class="admin login">
-<div id="content" class="container">
 	<div id="login">
 
 	<?php print_messages(); ?>
@@ -71,7 +70,5 @@ if(isset($_GET['action']) && $_GET['action']=="submit"){
 			</p>
 		</form>
 	</div>
-</div>
-
 </body>
 </html>

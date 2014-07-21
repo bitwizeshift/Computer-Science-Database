@@ -8,20 +8,6 @@
  */
 
 
-
-/* Rebuild
---------------------------------------------------------------------------- */
-
-#content h1, #content h2, #content h3{margin: 20px 0 10px;}
-#content h2{
-	border-bottom: 1px solid #ddd;
-	padding-bottom: 10px;
-}
-
-#content ul li{list-style: circle outside; margin-left: 20px;}
-#content ol li{list-style: decimal outside; margin-left: 20px;}
-#content ul, ol{display: block; margin: 10px 0;}
-
 /* Globals
 ---------------------------------------------------------------------------- */
 #wrapper{
@@ -29,14 +15,16 @@
 	height: auto !important; height: 100%;
 	margin: 0 auto -3em;
 }
+
 #header, #footer{min-width: 980px;}
+
 #push, #footer{ height: 3em;}
+
 #push{margin-top: 0.714em; }
 
 
 /* Header
 ---------------------------------------------------------------------------- */
-#header-content{height: 110px; position: relative;}
 #logo{float: left; height: 80px; position: absolute; left: 0;}
 #logo a{
 	text-indent: -99999px;
@@ -44,11 +32,11 @@
 	height: 80px; width: 80px;
 	background: url("../img/logo-80x80.png") no-repeat left;	
 }
-#navigation{position: absolute; right: 0;}
 
 /* Navigation
 ---------------------------------------------------------------------------- */
 
+#navigation{position: absolute; right: 0;}
 #navigation ul li{
 	list-style: none;
 	float: left;
@@ -105,40 +93,3 @@
 	padding-right: 10px;
 }
 
-
-/* Footer
----------------------------------------------------------------------------- */
-#footer{
-	width: 100%;
-}
-#footer-links{
-	border-top: 1px solid #AAA;
-	height: 1.2em;
-	padding-top: 0.8em;
-	padding-bottom: 1em;
-}
-#footer-links a, #footer-links{
-	color: #111;
-	text-transform: uppercase;	
-	text-decoration: none;
-}
-#footer-links a:hover{
-	color: #000;
-	text-decoration: underline;
-}
-#footer-links{
-	font-size: 0.857em;
-}
-#footer-links ul, #footer-links li { float: left; }
-#footer-links li{
-	margin-right: 10px;
-	border-right: 1px solid #CCC;
-	padding-right: 10px;
-}
-#footer-links ul li:last-child{
-	border-right: none;
-}
-#footer-links #copyright{
-	padding: 0; margin: 0;
-	float: right;
-}

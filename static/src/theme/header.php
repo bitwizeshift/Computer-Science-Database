@@ -15,7 +15,7 @@
 			<nav id="navigation">
 			<ul>
 				<li><a href="admin">Login</a></li>
-				<li><a href="browse">Browse Articles</a></li>
+				<li><a href="browse">Browse</a></li>
 				<li><a href="about">About</a></li>
 			</ul>
 			<form class="search-form" action="search" method="GET" class="global-search">

@@ -34,17 +34,6 @@ body{
 	color: #eee;
 	background: #333;
 }
-.admin>#header a.home{
-	background: url(spriteset.png) no-repeat;
-	margin-right: 10px;
-	text-indent: -9999px;
-	width: 35px;
-	height: 35px;
-	padding: 0;
-}
-.admin>#header a.home:hover{
-	background-position: 0 -35px;
-}
 
 /* Login Form information
 --------------------------------------------------------------------------- */
@@ -199,9 +188,6 @@ body{
 	font-weight: bold;
 }
 
-
-
-
 #sidebar{
 	position: fixed;
 	top: 2em;
@@ -236,4 +222,11 @@ input{
 
 small{
 	color: #777;
+}
+
+/* Hidden
+--------------------------------------------------------------------------- */
+
+#MathJax_Message{
+	display: none !important;
 }

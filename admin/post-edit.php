@@ -23,6 +23,44 @@ set_message(Message::INFO,"This area will display tips or errors.");
 $title = "";
 $input = "";
 
+/* If modifying an article, pull the info or redirect to add new if it doesn't exist*/
+if(isset($_GET['id'])){
+	global $g_db;
+	$id = $_GET['id'];
+	$result = $g_db->query("SELECT title, input_content FROM `ucsd_posts` WHERE id = ? AND status=\"POST\"", $id);
+	// If it's not found, just add new article
+	if(!isset($result[0]))
+		redirect_address( "admin/post-edit.php");
+
+	$title = $result[0]['title'];
+	$input = $result[0]['input_content'];
+}
+
+/* If Submitting the article */
+if(isset($_GET['action']) && $_GET['action']=='submit'){
+	clear_messages();
+	
+	$info = array(
+		"title"   => $_POST['title'],
+		"parent"  => (int) 0,
+		"excerpt" => output_to_excerpt($_POST['output-content']),
+		"input"   => $_POST['input-content'],
+		"output"  => $_POST['output-content'],
+		"user_id" => (int) $_SESSION['sess_user_id'],
+		"date"    => date( 'Y-m-d H:i:s', time() ),
+		"slug"    => title_to_slug($_POST['title'])
+	);
+	
+	if(isset($_GET['id'])){
+		$info['id'] = (int) $_GET['id'];
+		update_post($info, false);
+	}else{
+		update_post($info);
+	}
+}
+
+/*
+
 if(isset($_GET['id'])){
 	global $g_db;
 	$id = $_GET['id'];
@@ -98,6 +136,9 @@ if(isset($_GET['action']) && $_GET['action']=='submit'){
 	set_message(Message::SUCCESS, "Article posted successfully");
 	
 }
+
+*/
+
 ?>
 
 

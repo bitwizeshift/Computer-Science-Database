@@ -29,16 +29,18 @@ $index = ($page-1) * $per_page;
 $stmt = "SELECT ucsd_posts.id,`title`,`display_name`,`modified` 
 		 FROM `ucsd_posts` JOIN `ucsd_users` 
 		 WHERE ucsd_posts.author_id = ucsd_users.id AND ucsd_posts.status = \"POST\"
+		 ORDER BY `modified` DESC 
 		 LIMIT ?,?";
 
 $posts = $g_db->query($stmt, array($index, $per_page));
-$r = $g_db->query("SELECT count(id) AS count FROM ucsd_posts WHERE status = \"POST\" ");
+$r     = $g_db->query("SELECT count(id) AS count FROM ucsd_posts WHERE status = \"POST\" ");
 $total = $r[0]['count'];
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
+<title>Post</title>
 <?php require('admin-meta.php'); ?>
 </head>
 
@@ -68,7 +70,7 @@ foreach( (array) $posts as &$post){
 ?>
 		</tbody>
 	</table>
-	<?php generate_pagination($page, $total, $per_page) ?>
+	<?php generate_pagination($page, $total, $per_page); ?>
 	</div>
 </div>
 </div>

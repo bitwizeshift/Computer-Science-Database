@@ -12,6 +12,7 @@
  */
 ?>
 <base href="<?=get_home_url(); ?>" target="_self">        
+<meta name="robots" content="noindex, nofollow">
 <script type="text/javascript" src="static/js/Markdown.Converter.js"></script>
 <script type="text/javascript" src="static/js/Markdown.Sanitizer.js"></script>
 <script type="text/javascript" src="static/js/Markdown.Editor.js"></script>

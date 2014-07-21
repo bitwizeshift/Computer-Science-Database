@@ -18,6 +18,7 @@ require( ADMIN_PATH . INC_DIR . '/admin-functions.php');
 require( ADMIN_PATH . INC_DIR . '/message.class.php');
 require( ADMIN_PATH . INC_DIR . '/validation.php');
 require( ADMIN_PATH . INC_DIR . '/generate-html.php');
+require( ADMIN_PATH . INC_DIR . '/post-functions.php');
 
 // Initialize important globals
 /** Stack of messages in the form of {level, message} */

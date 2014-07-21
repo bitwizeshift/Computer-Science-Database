@@ -7,6 +7,7 @@
 <div id="wrapper">
 	<?php get_header(); ?>
 	<div id="content" class="container">
+	
 		<div id="banner">
 			<img src="static/img/banner.jpg"/>
 			<div id="banner-content">
@@ -16,15 +17,16 @@
 				</div>
 			</div>
 		</div>
-
-		<div id="update-content">
+		
+		<div class="panel">
 			<h2>Updated Articles</h2>
 			<h3>Article 1</h3>
 			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nec accumsan ipsum. Integer gravida et leo eget pulvinar. Ut lorem nisi, dictum non suscipit sit amet, sagittis vel massa. Praesent pellentesque, urna sed ullamcorper lacinia, leo diam hendrerit magna, id venenatis nunc velit a enim. Suspendisse potenti. </p>
 			<h3>Article 2</h3>
 			<p>Quisque pellentesque, odio sagittis ullamcorper mollis, turpis lectus feugiat erat, ac fringilla justo libero nec tellus. Vestibulum sed semper metus. Ut pellentesque quam eget tellus facilisis, a ultrices ligula condimentum. Fusce sit amet laoreet dolor. Vivamus at turpis viverra, scelerisque est sed, adipiscing libero. Sed non enim id nunc interdum elementum ut in tellus. Pellentesque facilisis, nulla eu consequat euismod, felis nibh adipiscing lectus, ac scelerisque felis eros eu enim. Aenean felis eros, suscipit consectetur lacus eu, placerat tempor lectus. </p>
 		</div>
-		<div id="featured-content">
+		
+		<div class="panel">
 			<h2>Featured Article</h2>
 			<h3>Article 3</h3>
 			<p>In pretium, enim et dapibus auctor, metus eros tincidunt dolor, quis feugiat nisi sapien quis erat. Donec orci ligula, condimentum sit amet ligula a, sollicitudin interdum justo. Nulla facilisis, mi id ullamcorper congue, sem justo accumsan arcu, et faucibus quam nulla vel nulla.</p>

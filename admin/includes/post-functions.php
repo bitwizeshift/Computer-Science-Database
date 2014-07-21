@@ -127,35 +127,36 @@ function add_new_post($info){
 	global $g_db;
 	
 	$params = array(
-		":title"  => $info['title'],
-		":parent" => $info['parent'],
-		":excerpt"=> $info['excerpt'],
+		":title"  => &$info['title'],
+		":parent" => &$info['parent'],
+		":excerpt"=> &$info['excerpt'],
 		":status" => "POST",
-		":input"  => $info['input'],
-		":output" => $info['output'],
-		":user_id"=> $info['user_id'],
-		":date"   => $info['date']
+		":input"  => &$info['input'],
+		":output" => &$info['output'],
+		":user_id"=> &$info['user_id'],
+		":date"   => &$info['date']
 	);
 	
-	print_r($params);
-	
-	$stmt = "INSERT INTO `ucsd_posts`(`title`,`parent`,`excerpt`,`status`,`input_content`,`output_content`,`author_id`,`modified`)
+	$stmt = "INSERT INTO ucsd_posts(title,parent,excerpt,status,input_content,output_content,author_id,modified)
 		VALUES(:title, :parent, :excerpt, :status, :input, :output, :user_id, :date)";
-	
+
 	/* Insert new Post */
-	$id = $g_db->query($stmt, $params);
+	$id = $g_db->execute($stmt, $params);
 	
 	/* Insert revision of Post*/
 	$params[':parent'] = $id;
 	$params[':status'] = "REVISION"; 
-	$g_db->query($stmt, $params);
+	$g_db->execute($stmt, $params);
 	
 	/* Insert slug for post */
 	$params = array(
 		":slug"       => $info['slug'],
 		":article_id" => $id
 	);
-	$g_db->query("INSERT INTO ucsd_slugs(slug, article_id) VALUES(:slug, :article_id)", $params);
+	$g_db->execute("INSERT INTO ucsd_slugs(slug, article_id) VALUES(:slug, :article_id)", $params);
+	
+	// Inform the user that it was successfully posted
+	set_message(Message::SUCCESS, "Article posted successfully");
 }
 
 /**
@@ -166,31 +167,44 @@ function edit_post($info){
 	global $g_db;
 	
 	$params = array(
-		":title"  => $info['title'],
-		":parent" => $info['parent'],
-		":excerpt"=> $info['excerpt'],
+		":title"  => &$info['title'],
+		":parent" => &$info['parent'],
+		":excerpt"=> &$info['excerpt'],
 		":status" => "POST",
-		":input"  => $info['input'],
-		":output" => $info['output'],
-		":user_id"=> $info['author'],
-		":date"   => $info['date'],
-		":id"     => $info['id']);	
+		":input"  => &$info['input'],
+		":output" => &$info['output'],
+		":user_id"=> &$info['user_id'],
+		":date"   => &$info['date'],
+		":id"     => &$info['id']
+	);	
 	
-	$stmt = "SET `title`=:title, `parent`=:parent, `excerpt`=:excerpt, `status`=:status, 
+	$stmt = "UPDATE `ucsd_posts` 
+		SET `title`=:title, `parent`=:parent, `excerpt`=:excerpt, `status`=:status, 
 		`input_content`=:input,	`output_content`=:output, `author_id`=:user_id, `modified`=:date
 		WHERE `id`=:id";
 	
 	/* Update Post */
-	$g_db->execute($stmt, $vars);
+	$g_db->execute($stmt, $params);
 	
 	/* Insert revision of Post */
 	$stmt = "INSERT INTO `ucsd_posts`(`title`,`parent`,`excerpt`,`status`,`input_content`,`output_content`,`author_id`,`modified`)
 		VALUES(:title,:parent,:excerpt,:status,:input,:output,:user_id,:date)";
 	$params[':status'] = "REVISION";
-	$params[':parent'] = $params['id'];
-	unset($params['id']);
-	$id = $g_db->query($stmt, $params);
-
+	$params[':parent'] = $info['id'];
+	unset($params[':id']);
+		
+	$g_db->execute($stmt, $params);
+	
+	$params = array(
+		":slug"       => &$info['slug'],
+		":article_id" => &$info['id']
+	);
+	$g_db->execute("UPDATE `ucsd_slugs` 
+		SET `slug` = :slug
+		WHERE `article_id` = :article_id", $params);
+	
+	// Inform the user that it was successfully updated
+	set_message(Message::SUCCESS, "Article updated successfully");
 }
 
 /* Slug information

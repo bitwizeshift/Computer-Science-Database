@@ -10,86 +10,18 @@
 
 /* Globals
 ---------------------------------------------------------------------------- */
-#wrapper{
-	min-height: 100%;
-	height: auto !important; height: 100%;
-	margin: 0 auto -3em;
-}
 
-#header, #footer{min-width: 980px;}
-
-#push, #footer{ height: 3em;}
-
-#push{margin-top: 0.714em; }
 
 
 /* Header
 ---------------------------------------------------------------------------- */
-#logo{float: left; height: 80px; position: absolute; left: 0;}
-#logo a{
-	text-indent: -99999px;
-	display: block;
-	height: 80px; width: 80px;
-	background: url("../img/logo-80x80.png") no-repeat left;	
-}
 
-/* Navigation
----------------------------------------------------------------------------- */
 
-#navigation{position: absolute; right: 0;}
-#navigation ul li{
-	list-style: none;
-	float: left;
-	margin-right: 10px;
-	margin-left: 0;
-	border-right: 1px solid #CCC;
-	padding-right: 10px;
-}
-#navigation ul li:last-child{
-	border-right: none;
-}
-#navigation ul{float: left;}
-#navigation .search-form{float: left;}
+
 
 
 /* Content
 ---------------------------------------------------------------------------- */
 
-#banner{
-	color: #FFF;
-	position: relative;
-	background-color: black;
-	width: 980px; height: 320px;
-	overflow: hidden;
-}
 
-#banner-content{
-	position: absolute;
-	z-index: 1;
-	right: 0;
-	top: 0;
-	width: 300px; height: 320px;
-	display: table;
-	border-left: 1px solid  rgba(255,255,255,0.4);
-	background-color: rgba(0,0,0,0.4);
-}
-
-.banner-content-inner{
-	margin: auto;
-	display: table-cell;
-	vertical-align: middle;
-	padding: 0 35px;
-}
-
-#update-content{
-	float: left;
-	width: 620px;
-	padding-left: 10px;
-}
-
-#featured-content{
-	float: right;
-	width: 310px;
-	padding-right: 10px;
-}
 

@@ -30,6 +30,9 @@ body{
 	line-height: 35px;
 	padding: 0 10px;
 }
+.admin>#header a.disabled{
+	color: #888;
+}
 .admin>#header a:hover{
 	color: #eee;
 	background: #333;

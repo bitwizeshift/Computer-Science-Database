@@ -21,7 +21,85 @@
  
 body{background-color: #e6e6e6;}
 
+#wrapper{
+	min-height: 100%;
+	height: auto !important; height: 100%;
+	margin: 0 auto -3em;
+}
 
+#header, #footer{min-width: 980px;}
+
+#push, #footer{ height: 3em;}
+
+#push{margin-top: 0.714em; }
+
+.search-form{
+	float:right;	
+}
+
+
+
+/* Header
+---------------------------------------------------------------------------- */
+
+#header{
+	background: #222;
+	height: 35px;
+	margin-bottom: 20px;
+}
+#header>#header-content{
+	height: 100%;
+}
+#header a{
+	color: #bbbbbb;
+	text-decoration: none;
+	display: inline-block;
+	height: 35px;
+	line-height: 35px;
+	padding: 0 10px;
+}
+#header a:hover{
+	color: #eee;
+	background: #333;
+}
+/*
+#header{
+	background: #fff;
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
+	margin-bottom: 20px;
+}
+#header-content{height: 90px; position: relative;}
+
+#logo{float: left; height: 80px; position: absolute; left: 0;}
+#logo a{
+	text-indent: -99999px;
+	display: block;
+	height: 80px; width: 80px;
+	background: url("../img/logo-80x80.png") no-repeat left;	
+}*/
+
+/* Navigation
+---------------------------------------------------------------------------- */
+
+#navigation{position: absolute; right: 0;}
+#navigation ul li{
+	list-style: none;
+	float: left;
+	margin-right: 10px;
+	margin-left: 0;
+	border-right: 1px solid #CCC;
+	padding-right: 10px;
+}
+#navigation ul li:last-child{
+	border-right: none;
+}
+#navigation ul{float: left;}
+#navigation .search-form{float: left;}
+
+/* Content
+---------------------------------------------------------------------------- */
+
+/* Banner Content */
 #banner{
 	color: #FFF;
 	position: relative;
@@ -31,19 +109,23 @@ body{background-color: #e6e6e6;}
 	margin-bottom: 20px;
 }
 
-/* Header
----------------------------------------------------------------------------- */
-
-#header{
-	background: #fff;
-	box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
-	margin-bottom: 20px;
+#banner-content{
+	position: absolute;
+	z-index: 1;
+	right: 0;
+	top: 0;
+	width: 300px; height: 320px;
+	display: table;
+	border-left: 1px solid  rgba(255,255,255,0.4);
+	background-color: rgba(0,0,0,0.4);
 }
-#header-content{height: 90px; position: relative;}
 
-/* Content
----------------------------------------------------------------------------- */
-
+.banner-content-inner{
+	margin: auto;
+	display: table-cell;
+	vertical-align: middle;
+	padding: 0 35px;
+}
 
 
 /* Footer

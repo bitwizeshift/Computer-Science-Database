@@ -11,7 +11,7 @@
   <?php get_header(); ?>
   <div id="content" class="container">
   	<div class="panel">
-  		<h2>About UCSD</h2>
+  		<h2>Browse Articles</h2>
   	</div>
   </div>
 	<div id="push"></div>

@@ -17,32 +17,38 @@ require_once( dirname(__FILE__) . '/admin-bootstrap.php' );
 if(!is_secure_session()){
 	redirect_address( "admin/login.php" );
 }
-
 set_message(Message::INFO,"This area will display tips or errors.");
 
-$title = "";
-$input = "";
+global $g_db;
+
+$posts = $g_db->query("SELECT id, title FROM ucsd_posts WHERE status=\"POST\" ORDER BY title");
+
+$title  = http_value("POST", "title","");
+$input  = http_value("POST", "input-content","");
+$parent = (int) http_value("POST", "parent",0);
 
 /* If modifying an article, pull the info or redirect to add new if it doesn't exist*/
 if(isset($_GET['id'])){
 	global $g_db;
 	$id = $_GET['id'];
-	$result = $g_db->query("SELECT title, input_content FROM `ucsd_posts` WHERE id = ? AND status=\"POST\"", $id);
+	$result = $g_db->query("SELECT title, parent, input_content FROM `ucsd_posts` WHERE id = ? AND status=\"POST\"", $id);
 	// If it's not found, just add new article
 	if(!isset($result[0]))
 		redirect_address( "admin/post-edit.php");
 
 	$title = $result[0]['title'];
 	$input = $result[0]['input_content'];
+	$parent = $result[0]['parent'];
 }
 
+
 /* If Submitting the article */
-if(isset($_GET['action']) && $_GET['action']=='submit'){
+if(isset($_POST['title']) && isset($_GET['action']) && $_GET['action']=='submit'){
 	clear_messages();
 	
 	$info = array(
 		"title"   => $_POST['title'],
-		"parent"  => (int) 0,
+		"parent"  => (int) $_POST['parent'],
 		"excerpt" => output_to_excerpt($_POST['output-content']),
 		"input"   => $_POST['input-content'],
 		"output"  => $_POST['output-content'],
@@ -58,86 +64,6 @@ if(isset($_GET['action']) && $_GET['action']=='submit'){
 		update_post($info);
 	}
 }
-
-/*
-
-if(isset($_GET['id'])){
-	global $g_db;
-	$id = $_GET['id'];
-	$result = $g_db->query("SELECT title, input_content FROM `ucsd_posts` WHERE id = ? AND status=\"POST\"", $id);
-	// If it's not found, just add new article
-	if(!isset($result[0])) 
-		redirect_address( "admin/post-edit.php");
-	
-	$title = $result[0]['title'];
-	$input = $result[0]['input_content'];
-}
-// If submitting a post
-if(isset($_GET['action']) && $_GET['action']=='submit'){
-	global $g_db;
-	
-	clear_messages();
-	
-	// Get article information
-	$title   = $_POST['title'];
-	$input   = $_POST['input-content'];
-	$output  = $_POST['output-content'];
-	$parent  = 0; #$_POST['parent'];
-	$user_id = $_SESSION['sess_user_id'];
-	$time    = date( 'Y-m-d H:i:s', time() );
-	$slug    = title_to_slug($title);
-	$excerpt = "";
-	$status  = "POST";
-	
-	$vars    = array(
-			":title"  => $title,
-			":parent" => $parent,
-			":excerpt"=> $excerpt,
-			":status" => $status,
-			":input"  => $input,
-			":output" => $output,
-			":user_id"=> $user_id,
-			":date"   => $time);
-	
-	if(isset($_GET['id'])){
-		$vars[':id'] = (int) $_GET['id'];
-		$stmt = "UPDATE `ucsd_posts` 
-				SET `title`=:title, `parent`=:parent, `excerpt`=:excerpt, `status`=:status, 
-					`input_content`=:input,	`output_content`=:output, `author_id`=:user_id, `modified`=:date
-				WHERE `id`=:id";
-	}else{
-		$stmt = "INSERT INTO `ucsd_posts`(`title`,`parent`,`excerpt`,`status`,`input_content`,`output_content`,`author_id`,`modified`)
-			           VALUES(:title,:parent,:excerpt,:status,:input,:output,:user_id,:date)";
-	}
-	// Create the original POST to publish
-	$id = $g_db->execute($stmt, $vars);
-	if(isset($_GET['id']))
-		$id = (int) $_GET['id'];
-	
-	$stmt = "INSERT INTO `ucsd_posts`(`title`,`parent`,`excerpt`,`status`,`input_content`,`output_content`,`author_id`,`modified`)
-			           VALUES(:title,:parent,:excerpt,:status,:input,:output,:user_id,:date)";
-	
-	// Create the first REVISION of the article
-	if(isset($vars[':id'])) unset($vars[':id']);
-	$vars[':status'] = "REVISION";
-	$vars[':parent'] = $id;
-	$g_db->execute($stmt, $vars);
-	
-	if(isset($_GET['id'])){
-		// Create the slug for the article
-		$vars = array(
-			":slug"       => $slug,
-			":article_id" => $id
-		);
-		$stmt = "INSERT INTO ucsd_slugs(slug, article_id) VALUES(:slug, :article_id)";
-		$g_db->execute($stmt, $vars);
-	}
-	
-	set_message(Message::SUCCESS, "Article posted successfully");
-	
-}
-
-*/
 
 ?>
 
@@ -181,7 +107,19 @@ if(isset($_GET['action']) && $_GET['action']=='submit'){
 					<textarea name="output-content" id="wmd-output" class="removed"></textarea>
 					<p>
 						<label for="wmd-parent-input">Parent<br>
-						<input type="text" name="parent" id="wmd-parent-input" class="full-size"></label>
+						<select type="text" name="parent" id="wmd-parent-input" class="full-size">
+							<option value="0" style="color: #777;">No parent</option>
+							<?php 
+							foreach($posts as &$post){
+								if($parent==$post['id']){
+									echo("<option value='{$post['id']}' selected='selected'>{$post['title']}</option>");	
+								}else{
+									echo("<option value='{$post['id']}'>{$post['title']}</option>");
+								}
+							}
+							?>
+						</select>
+						</label>
 					</p>
 			    	<input type="submit" name="submit" id="wmd-submit" class="button" value="Publish" onclick="saveParsedContent();">
 	    		</form>

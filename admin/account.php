@@ -76,10 +76,6 @@ if(!is_secure_session()){
 				</p>
 			</form>
 		</div>
-		
-		<div class="panel">
-			<h3 class="heading">Add New Account</h3>
-		</div>
 	</div>
 </div>
 

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 
 ?>
 <!DOCTYPE html>
@@ -11,7 +12,7 @@
   <?php get_header(); ?>
   <div id="content" class="container">
   	<div class="panel">
-  		<h2>About UCSD</h2>
+  		<h2>Terms of Use</h2>
   	</div>
   </div>
 	<div id="push"></div>

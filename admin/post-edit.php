@@ -19,29 +19,6 @@ if(!is_secure_session()){
 }
 set_message(Message::INFO,"This area will display tips or errors.");
 
-global $g_db;
-
-$posts = $g_db->query("SELECT id, title FROM ucsd_posts WHERE status=\"POST\" ORDER BY title");
-
-$title  = http_value("POST", "title","");
-$input  = http_value("POST", "input-content","");
-$parent = (int) http_value("POST", "parent",0);
-
-/* If modifying an article, pull the info or redirect to add new if it doesn't exist*/
-if(isset($_GET['id'])){
-	global $g_db;
-	$id = $_GET['id'];
-	$result = $g_db->query("SELECT title, parent, input_content FROM `ucsd_posts` WHERE id = ? AND status=\"POST\"", $id);
-	// If it's not found, just add new article
-	if(!isset($result[0]))
-		redirect_address( "admin/post-edit.php");
-
-	$title = $result[0]['title'];
-	$input = $result[0]['input_content'];
-	$parent = $result[0]['parent'];
-}
-
-
 /* If Submitting the article */
 if(isset($_POST['title']) && isset($_GET['action']) && $_GET['action']=='submit'){
 	clear_messages();
@@ -63,6 +40,25 @@ if(isset($_POST['title']) && isset($_GET['action']) && $_GET['action']=='submit'
 	}else{
 		update_post($info);
 	}
+}
+
+/* Get article information to populate the fields*/
+global $query;
+
+$posts = $query->query_posts("POST");
+
+$title  = http_value("POST", "title","");
+$input  = http_value("POST", "input-content","");
+$parent = (int) http_value("POST", "parent",0);
+
+/* If modifying an article, pull the info or redirect to add new if it doesn't exist*/
+if(isset($_GET['id'])){
+	
+	$id = (int) $_GET['id'];
+	$post = $query->query_post( $id, true );
+	$title = $post['title'];
+	$input = $post['input'];
+	$parent = $post['parent'];
 }
 
 ?>
@@ -131,23 +127,7 @@ if(isset($_POST['title']) && isset($_GET['action']) && $_GET['action']=='submit'
 			<script type="text/javascript">
 		(function () {
 			var converter = new Markdown.Converter();
-            	  
-			converter.hooks.chain("preBlockGamut", function (text, rbg) {
-				return text.replace(/^ {0,3}""" *\n((?:.*?\n)+?) {0,3}""" *$/gm, function (whole, inner) {
-					return "<blockquote>" + rbg(inner) + "</blockquote>\n";
-				});
-			}); 
-
-			converter.hooks.chain("plainLinkText", function (url) {
-				return "This is a link to " + url.replace(/^https?:\/\//, "");
-			});
-                
-			var help = function () { alert("Do you need help?"); }
-			var options = {
-				helpButton: { handler: help },
-				strings: { quoteexample: "quoted text" }
-			};
-			var editor = new Markdown.Editor(converter, "", options);
+			var editor = new Markdown.Editor(converter, "", null);
                 
 			editor.run();
                 
@@ -159,5 +139,5 @@ if(isset($_POST['title']) && isset($_GET['action']) && $_GET['action']=='submit'
 	</div><!-- #wrapper -->
 
 </body>
-  
+
 </html>

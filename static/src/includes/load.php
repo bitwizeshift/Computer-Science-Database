@@ -53,12 +53,12 @@ function admin_resource_exists( $resource ){
  * @global $g_db Database Object
  */
 function load_database(){
-	global $g_db;
+	global $query;
 
-	require_once( INCLUDE_PATH . 'db.class.php');
-	if ( isset( $g_db ) )
+	require_once( INCLUDE_PATH . 'database.class.php');
+	if ( isset( $query ) )
 		return;
-	$GLOBALS['g_db'] = new Connection("settings.ini");
+	$GLOBALS['query'] = new Query('newsettings.ini');
 }
 
 /**
@@ -88,13 +88,31 @@ function load_asset_manager(){
  * @global $siteinfo associative array of site information
  */
 function load_site_info(){
-	global $siteinfo, $g_db;
+	global $siteinfo, $query;
 	
-	$result = $g_db->query("SELECT option_name, option_value FROM ucsd_options");
+	$options = $query->query_options();
 	
-	foreach( (array) $result as &$row){
-		$siteinfo[$row['option_name']] = $row['option_value'];
+	foreach( (array) $options as &$option){
+		$siteinfo[$option['option_name']] = $option['option_value'];
 	}	
+}
+
+/**
+ * Load the query information
+ * 
+ */
+function load_query_information(){
+	global $query_info;
+	
+	$defaults = array("p"              => 1,
+					  "posts_per_page" => 10,
+					  "page"           => "home",
+					  "slug"           => null,
+					  "search"         => null,
+					  "sortby"         => "date");
+	
+	$GLOBALS['query_info'] = parse_args($_GET, $defaults);
+	
 }
 
 /**
@@ -104,7 +122,7 @@ function load_site_info(){
  * @global $g_pages The map of all static pages
  */
 function load_current_view(){
-	global $g_view, $g_pages, $g_db;
+	global $g_view, $g_pages, $query;
 
 	// Store page and slug information
 	$page = (isset($_GET['page']) ? $_GET['page'] : 'home');
@@ -112,9 +130,9 @@ function load_current_view(){
 
 	// If an article is specified
 	if( $page=='article' && $slug != null ){
-		$result = $g_db->query("SELECT article_id FROM ucsd_slugs WHERE slug = ?", $slug);
-		if(isset($result[0]['article_id'])){
-			$GLOBALS['g_view'] = new Article( $result[0]['article_id'] );
+		$id = $query->query_term( $slug, "SLUG" );
+		if($id){
+			$GLOBALS['g_view'] = new Article( (int) $id );
 		}else{
 			$GLOBALS['g_view'] = $GLOBALS['g_pages']['404'];
 		}

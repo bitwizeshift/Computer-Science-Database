@@ -143,15 +143,8 @@ function get_title(){
 function get_authors(){
 	global $g_view;
 	$authors = $g_view->get_authors();
-	$result = "";
-	$max = count($authors);
-	for($i=0;$i<$max;++$i){
-		$result.=$authors[$i];
-		if($i!=$max-1){
-			$result.=", ";
-		}
-	}
-	return $result;
+	
+	return args_to_string($authors, ', ');
 }
 
 
@@ -159,6 +152,11 @@ function get_authors(){
 function get_description(){
 	global $g_view;
 	return $g_view->get_description();
+}
+
+function get_children(){
+	global $g_view;
+	return $g_view->get_children();
 }
 
 /* Getters: Content

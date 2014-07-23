@@ -81,7 +81,7 @@ function is_ssl() {
  * @param string $date Date string from mysql to convert
  * @return string|int Formatted date string, or Unix timestamp.
  */
-function convert_mysql_date($format, $date){
+function mysql_to_date($format, $date){
 	if(empty( $date ))
 		return null;
 	
@@ -94,6 +94,77 @@ function convert_mysql_date($format, $date){
 		return $time;
 	
 	return date( $format, $date );
+}
+
+function current_time( $type, $gmt = 0 ) {
+	global $siteinfo;
+	switch ( $type ) {
+		case 'mysql':
+			return ( $gmt ) ? gmdate( 'Y-m-d H:i:s' ) : gmdate( 'Y-m-d H:i:s', ( time() + ( $siteinfo['gmt_offset'] * HOUR_IN_SECONDS ) ) );
+		case 'timestamp':
+			return ( $gmt ) ? time() : time() + ( $siteinfo['gmt_offset'] * HOUR_IN_SECONDS );
+		default:
+			return ( $gmt ) ? date( $type ) : date( $type, time() + ( $siteinfo['gmt_offset'] * HOUR_IN_SECONDS ) );
+	}
+}
+/**
+ * Hides details of the string past $visible_length from the user.
+ * 
+ * Possible uses are:
+ * 
+ * $password = "12345abcde"
+ * hide_string( $password, 4 );
+ * > "1234******"
+ * 
+ * @param unknown $string
+ * @param unknown $visible_length
+ * @param string $fill
+ * @return string
+ */
+function hide_string( $string, $visible_length, $fill = "*"){
+	return substr( $string,0,$visible_length ) . str_repeat( $fill, (strlen($string)-$visible_length ) );
+}
+
+/**
+ * Parses arguments into a single string containing values.
+ *
+ * @param object|array|string $args argument to parse
+ * @param string $separator[optional]
+ * @param string $before[optional]
+ * @param string $after[optional]
+ * @return array containing all the passed values
+ */
+
+function args_to_string( $args,  $separator=',', $before='', $after=''){
+	if( is_object( $args ) ){
+		$arr = get_object_vars( $args );
+	}elseif( is_array( $args )){
+		$arr = &$args;
+	}else{
+		$arr = (array) $args;
+	}
+	return $before . implode( $separator, $arr ) . $after;
+}
+
+/**
+ * Parses arguments into a single array. 
+ * 
+ * @param object|array|string $args argument to parse
+ * @param array $defaults[optional] default values for args
+ * @return array containing all the passed values
+ */
+function parse_args( $args, $defaults = null ) {
+	if( is_object( $args ) ){
+		$r = get_object_vars( $args );
+	}elseif( is_array( $args ) ){
+		$r = &$args;
+	}else{
+		parse_str( $args, $r );
+	}
+	if ( is_array( $defaults ) ){
+		return array_merge( $defaults, $r );
+	}
+	return $r;
 }
  
 ?>

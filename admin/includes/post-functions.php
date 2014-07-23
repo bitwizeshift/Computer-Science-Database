@@ -20,6 +20,7 @@ function add_user_account($username, $password){
 
 
 }
+
 /*
 function validate_username($username){
 	global $g_db;
@@ -46,7 +47,7 @@ function validate_email($email){
 }
 */
 
-function validate_title($title){
+function validate_title( $title ){
 	if($title==""){
 		set_message(Message::ERROR, "Title can't be empty");
 		return false;
@@ -54,26 +55,27 @@ function validate_title($title){
 	return true;
 }
 
-function validate_slug($slug){
-	global $g_db;
+function validate_slug( $slug ){
+	global $query;
 	if($slug==""){
 		set_message(Message::ERROR, "Slug can't be empty. The title must have non-special characters.");
 		return false;
 	}
-	$result = $g_db->query("SELECT id FROM ucsd_slugs WHERE slug = ?", $slug);
-	if(isset($result[0]['id'])){
+	$exists = $query->term_exists($slug, "SLUG");
+	if($exists){
 		set_message(Message::ERROR, "Slug already in use.");
 		return false;
 	}
 	return true;
 }
 
-function validate_parent($parent){
-	global $g_db;
-	if(!isset($parent) || $parent=="")
+function validate_parent( $parent ){
+	global $query;
+	if($parent==0)
 		return true;
-	$result = $g_db->query("SELECT id FROM ucsd_slugs WHERE slug = ?", $parent);
-	if(isset($result[0]['id'])){
+
+	$exists = $query->post_exists( $parent );
+	if(!$exists){
 		set_message(Message::ERROR, "Parent must exist.");
 		return false;
 	}
@@ -107,8 +109,8 @@ function update_post($info, $add_new = true){
 	/* Validate Parameters */
 	if(!validate_title($info['title']))
 		return;
-	if(!validate_slug($info['slug']))
-		return;
+	//if(!validate_slug($info['slug']))
+	//	return;
 	if(!validate_parent($info['parent']))
 		return;
 	
@@ -124,37 +126,18 @@ function update_post($info, $add_new = true){
  * @param unknown $info
  */
 function add_new_post($info){
-	global $g_db;
-	
-	$params = array(
-		":title"  => &$info['title'],
-		":parent" => &$info['parent'],
-		":excerpt"=> &$info['excerpt'],
-		":status" => "POST",
-		":input"  => &$info['input'],
-		":output" => &$info['output'],
-		":user_id"=> &$info['user_id'],
-		":date"   => &$info['date']
-	);
-	
-	$stmt = "INSERT INTO ucsd_posts(title,parent,excerpt,status,input_content,output_content,author_id,modified)
-		VALUES(:title, :parent, :excerpt, :status, :input, :output, :user_id, :date)";
+	global $query;
 
-	/* Insert new Post */
-	$id = $g_db->execute($stmt, $params);
+	/* Insert the post*/
+	$post_id = $query->insert_post( $info, "POST" );
 	
-	/* Insert revision of Post*/
-	$params[':parent'] = $id;
-	$params[':status'] = "REVISION"; 
-	$g_db->execute($stmt, $params);
-	
-	/* Insert slug for post */
-	$params = array(
-		":slug"       => $info['slug'],
-		":article_id" => $id
-	);
-	$g_db->execute("INSERT INTO ucsd_slugs(slug, article_id) VALUES(:slug, :article_id)", $params);
-	
+	/* Insert the revision */
+	$info['parent'] = $post_id;
+	$query->insert_post( $info, "REVISION" );
+
+	$term_id = $query->insert_term( $info['slug'], $info['title'] );
+	$query->insert_term_relation( $term_id, $post_id, "SLUG" );
+		
 	// Inform the user that it was successfully posted
 	set_message(Message::SUCCESS, "Article posted successfully");
 }
@@ -164,44 +147,17 @@ function add_new_post($info){
  * @param unknown $info
  */
 function edit_post($info){
-	global $g_db;
+	global $query;
+
+	/* Update the original post */
+	$query->update_post( $info, "POST" );
 	
-	$params = array(
-		":title"  => &$info['title'],
-		":parent" => &$info['parent'],
-		":excerpt"=> &$info['excerpt'],
-		":status" => "POST",
-		":input"  => &$info['input'],
-		":output" => &$info['output'],
-		":user_id"=> &$info['user_id'],
-		":date"   => &$info['date'],
-		":id"     => &$info['id']
-	);	
+	/* Add the new revision */
+	$info['parent'] = $info['id'];
+	$query->insert_post( $info, "REVISION" );
 	
-	$stmt = "UPDATE `ucsd_posts` 
-		SET `title`=:title, `parent`=:parent, `excerpt`=:excerpt, `status`=:status, 
-		`input_content`=:input,	`output_content`=:output, `author_id`=:user_id, `modified`=:date
-		WHERE `id`=:id";
-	
-	/* Update Post */
-	$g_db->execute($stmt, $params);
-	
-	/* Insert revision of Post */
-	$stmt = "INSERT INTO `ucsd_posts`(`title`,`parent`,`excerpt`,`status`,`input_content`,`output_content`,`author_id`,`modified`)
-		VALUES(:title,:parent,:excerpt,:status,:input,:output,:user_id,:date)";
-	$params[':status'] = "REVISION";
-	$params[':parent'] = $info['id'];
-	unset($params[':id']);
-		
-	$g_db->execute($stmt, $params);
-	
-	$params = array(
-		":slug"       => &$info['slug'],
-		":article_id" => &$info['id']
-	);
-	$g_db->execute("UPDATE `ucsd_slugs` 
-		SET `slug` = :slug
-		WHERE `article_id` = :article_id", $params);
+	/* Update term (slug) */
+	$query->update_slug( $info['id'], $info['slug'], $info['title'] );
 	
 	// Inform the user that it was successfully updated
 	set_message(Message::SUCCESS, "Article updated successfully");
@@ -211,7 +167,7 @@ function edit_post($info){
  -------------------------------------------------------------------------- */
 
 function output_to_excerpt($output){
-	$excerpt = substr(strip_tags($output),0,100) . " ...";
+	$excerpt = substr(strip_tags($output,'<p><a><strong><br>'),0,750) . " ...";
 	return $excerpt;
 }
 

@@ -17,11 +17,11 @@ interface View{
 	 */
 	public function get_title();
 	/**
-	 * Get the description of this view
+	 * Get the excerpt of this view
 	 *
 	 * @return string the string description 
 	 */
-	public function get_description();
+	public function get_excerpt();
 	/**
 	 * Get the list of authors for this view
 	 *
@@ -33,13 +33,13 @@ interface View{
 	 *
 	 * @return string the raw HTML content
 	 */
-	public function get_raw_content();
+	public function get_input_content();
 	/**
 	 * Get the parsed HTML content
 	 *
 	 * @return string the parsed HTML content
 	 */
-	public function get_parsed_content();
+	public function get_output_content();
 	/**
 	 * Gets the path to the resource file
 	 * 
@@ -58,12 +58,6 @@ interface View{
 	 * @return array string slugs of children
 	 */
 	public function get_children();
-	/**
-	 * Get the edit history
-	 *
-	 * @return mixed associative array of arrays containin (username,date) pairs.
-	 */
-	public function get_history();
 	/**
 	 * Get the date last modified
 	 *
@@ -104,12 +98,6 @@ interface View{
 	 * @return boolean true if view, false otherwise
 	 */
 	public function is_article();
-	/**
-	 * Is the page an admin page?
-	 *
-	 * @return boolean true if admin page, false otherwise
-	 */
-	public function is_admin();
 	
 }
 ?>

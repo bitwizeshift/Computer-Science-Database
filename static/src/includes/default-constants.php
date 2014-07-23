@@ -13,6 +13,7 @@ function default_constants(){
 }
 
 
+
 function ssl_constants(){
 	if( !defined( 'FORCE_SSL_ADMIN' ) ){
 		if( 'https' === parse_url ){

@@ -1,3 +1,18 @@
+CREATE TABLE IF NOT EXISTS `ucsd_term_relations` (
+  `term_id` INT UNSIGNED NOT NULL,
+  `post_id` INT UNSIGNED NOT NULL,
+  `type`    VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`term_id`, `post_id`),
+  CONSTRAINT `term_id`
+    FOREIGN KEY (`term_id`)
+    REFERENCES `ucsd_terms` (`id`)
+    ON DELETE CASCADE,
+  CONSTRAINT `post_id`
+    FOREIGN KEY (`post_id`)
+    REFERENCES `ucsd_posts` (`id`)
+    ON DELETE CASCADE
+)
+
 
 CREATE TABLE `ucsd_posts` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,

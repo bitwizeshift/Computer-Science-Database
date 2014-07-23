@@ -17,6 +17,10 @@ require_once( dirname(__FILE__) . '/admin-bootstrap.php' );
 if(!is_secure_session()){
 	redirect_address( "admin/login.php" );
 }
+global $query;
+
+$id = $_SESSION['sess_username'];
+$account = $query->query_user( $id );
 
 ?>
 
@@ -49,7 +53,7 @@ if(!is_secure_session()){
 				</p>
 				<p>
 					<label for="email-input">Email Address<br>
-					<input type="email" name="email" id="email-input" class="half-size" size="100"></label>
+					<input type="email" name="email" id="email-input" class="half-size" size="100" value="<?= $account['email']; ?>"></label>
 				</p>
 				<p class="submit">
 					<input type="submit" name="submit" id="submit-button" class="button" value="Change Information" disabled="disabled">

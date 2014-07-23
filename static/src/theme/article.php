@@ -13,6 +13,14 @@
   	</div>
   	<div class="panel">
   		<h2>Related to this Article</h2>
+  		<?php 
+  			$children = get_children();
+  			foreach($children as &$child){
+				echo "<h3><a href='article/{$child['slug']}'>{$child['title']}</a></h3>";
+				echo "<p>{$child['excerpt']}</p>";
+				
+			}
+  		?>
   	</div>
   </div>
 	<div id="push"></div>

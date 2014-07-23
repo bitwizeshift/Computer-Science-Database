@@ -54,17 +54,17 @@ function is_secure_session(){
  * @return boolean True if valid user
  */
 function validate_login($username, $password){
-	global $g_db;
+	global $query;
 	
-	$result = $g_db->query("SELECT * FROM ucsd_users WHERE username = ? ",$username);
+	$result = $query->query_user( $username );
 	if(empty($result))
 		return false;
 
-	$id   = $result[0]['id'];
-	$user = $result[0]['username'];
-	$disp = $result[0]['display_name'];
-	$pass = $result[0]['password'];
-	$salt = $result[0]['salt'];
+	$id   = $result['id'];
+	$user = $result['username'];
+	$disp = $result['display_name'];
+	$pass = $result['password'];
+	$salt = $result['salt'];
 	
 	$check = check_password($password, $salt, $pass);
 

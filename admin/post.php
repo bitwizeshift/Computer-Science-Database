@@ -19,7 +19,7 @@ require_once( dirname(__FILE__) . '/admin-bootstrap.php' );
 if(!is_secure_session())
 	redirect_address( "admin/login.php" );
 
-global $g_db;
+global $query;
 
 $per_page = (int) http_value("GET", "ppp", 10);
 $page     = (int) http_value("GET", "page",1);
@@ -32,9 +32,9 @@ $stmt = "SELECT ucsd_posts.id,`title`,`display_name`,`modified`
 		 ORDER BY `modified` DESC 
 		 LIMIT ?,?";
 
-$posts = $g_db->query($stmt, array($index, $per_page));
-$r     = $g_db->query("SELECT count(id) AS count FROM ucsd_posts WHERE status = \"POST\" ");
-$total = $r[0]['count'];
+$posts = $query->query_posts( "POST", Query::SORT_DATE_DESC , $per_page, $index );
+
+$total = $query->query_total_posts("POST");
 ?>
 
 <!DOCTYPE html>
@@ -63,8 +63,8 @@ $total = $r[0]['count'];
 foreach( (array) $posts as &$post){
 	echo("<tr>");
 	echo("<td><a href='admin/post-edit.php?id={$post['id']}'>{$post['title']}</a></td>");
-	echo("<td>{$post['display_name']}</td>");
-	echo("<td><time datetime='{$post['modified']}'>"  . date("F jS, Y",strtotime($post['modified'])) . "</time>" . "<small>" . date("h:i:sa",strtotime($post['modified'])) . "</small></td>");
+	echo("<td>{$post['author']}</td>");
+	echo("<td><time datetime='{$post['date']}'>"  . date("F jS, Y",strtotime($post['date'])) . "</time>" . "<small>" . date("h:i:sa",strtotime($post['date'])) . "</small></td>");
 	echo("</tr>");
 }
 ?>

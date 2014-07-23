@@ -116,27 +116,24 @@ class Article implements View{
 	 * @param int $id the id of the article
 	 */
 	private function _access_article_data( $id ){
-		global $g_db;
+		global $query;
 		
 		$this->is_article = true;
-		$result = $g_db->query(Article::ARTICLE_QUERY, $id);
+		$post = $query->query_post( $id );
 		
-		$this->title =          $result[0]['title'];
-		$this->excerpt =        $result[0]['excerpt'];
-		$this->raw_content =    $result[0]['input_content'];
-		$this->parsed_content = $result[0]['output_content'];
+		$this->title          = $post['title'];
+		$this->excerpt        = $post['excerpt'];
+		$this->raw_content    = "";
+		$this->parsed_content = $post['output'];
+		$this->date_modified  = $post['date'];
+		$this->date_created   = $post['date'];
 		
-		$result = $g_db->query(Article::HISTORY_QUERY, $id);
-		$this->date_modified = $result[0]['date_modified'];
-		$this->date_created  = $result[0]['date_modified'];
-		$this->authors       = array($result[0]['display_name']);
+		$authors = $query->query_authors( $id );
 		
-		#$this->parent = new Article( $id );
+		$this->authors = $authors;
 		
-		#foreach($children as &$child_id){
-		#	$this->children[] = new Article( $child_id );
-		#}
-		
+		$this->children = $query->query_children( $id );
+				
 	}
 	
 	/* Getters

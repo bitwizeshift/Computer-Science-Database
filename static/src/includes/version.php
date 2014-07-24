@@ -25,7 +25,7 @@ $GLOBALS['af_version'] = '1.0.0';
  * 
  * @global int $database_version
  */
-$GLOBALS['database_version'] = 1;
+$GLOBALS['database_version'] = 4;
 
 /**
  * Holds the pagedown revision version. Increments when

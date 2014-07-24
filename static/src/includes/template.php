@@ -113,7 +113,7 @@ function extract_text_from_tags($tag, $string){
 	return preg_match_all("#<{$tag}.*?>([^<]+)</{$tag}>#", $str, $foo);
 }
 
-function get_site_title($separator="&raquo"){
+function get_site_title($separator="&raquo;"){
 	global $g_view, $siteinfo;
 	
 	$title = $g_view->get_title();

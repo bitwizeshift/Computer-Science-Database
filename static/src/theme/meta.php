@@ -33,13 +33,18 @@ echo("<meta name='og:url' content='" . get_current_url() . "'>");
 <?php 
 echo("<link rel='canonical' href='" . get_current_url() . "'/>");
 ?>
-<link rel='apple-touch-icon' type='static/img/icon/apple-touch.png' />
-<link rel='icon' type='image/x-icon' href='static/img/icon/favicon.ico' />
-<link rel='icon' type='image/png' href='static/img/icon/favicon.png' />
-<link rel='stylesheet' type='text/css' href='static/css/common.css?ver=1.0' />
-<link rel='stylesheet' type='text/css' href='static/css/style.css?ver=1.0' media='screen' />
-<link rel='stylesheet' type='text/css' href='static/css/print.css?ver=1.0' media='print' />
-<link rel='stylesheet' type='text/css' href='<?php echo get_stylesheet_uri('style.css'); ?>' media='screen' />
+<link rel='icon' type='image/x-icon' href='static/img/icon/favicon.ico'>
+<link rel='icon' type='image/png' href='static/img/icon/favicon.png'>
+
+<link rel='apple-touch-icon' href='static/img/icon/touch-icon-iphone.png'>
+<link rel='apple-touch-icon' sizes='76x76' href='static/img/icon/touch-icon-ipad.png'>
+<link rel='apple-touch-icon' sizes='120x120' href='static/img/icon/touch-icon-iphone-retina.png'>
+<link rel='apple-touch-icon' sizes='152x152' href='static/img/icon/touch-icon-ipad-retina.png'>
+
+<link rel='stylesheet' type='text/css' href='static/css/common.css?ver=1.0'>
+<link rel='stylesheet' type='text/css' href='static/css/style.css?ver=1.0' media='screen'>
+<link rel='stylesheet' type='text/css' href='static/css/print.css?ver=1.0' media='print'>
+<link rel='stylesheet' type='text/css' href='<?php echo get_stylesheet_uri('style.css'); ?>' media='screen'>
 <?php if(is_article()){ ?>
 	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <?php }?>

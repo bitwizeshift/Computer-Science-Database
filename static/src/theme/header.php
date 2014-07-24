@@ -12,10 +12,10 @@
 		<nav class="navigation">
 			<ul id="admin-nav" class="left">
 				<li><a href="<?= get_home_url(); ?>" id="logo"><span data-icon="&#xe644;"></span> <strong>UCSD</strong> Computer Science Database</a></li>
-				<li><a href="browse/"><span data-icon="&#xe62c"></span> Browse Articles</a></li>
+				<li><a href="browse/"><span data-icon="&#xe62c;"></span> Browse Articles</a></li>
 			</ul>
-			<form class="search-form" method="post" action="search/" class="global-search">
-		        <label class="search-label">Search <span data-icon="&#xe63d"></span></label>
+			<form class="search-form global-search" method="post" action="search/">
+		        <label class="search-label">Search <span data-icon="&#xe63d;"></span></label>
 		        <input type="text" name="search" class="search-input" value="" placeholder="Search...">
 			</form>
 		</nav>

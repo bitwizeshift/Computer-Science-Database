@@ -110,9 +110,17 @@ del{
 }
 small{font-size: 0.75em;}
 time{display: block;}
-#content ol, #content ul{margin-bottom: 0.75rem;}
-#content ol li{list-style: decimal inside;}
-#content ul li{list-style: circle inside;}
+a{
+	color: #428bca;
+	text-decoration:none;
+}
+a:hover, a:focus{
+	color: #2a6496;
+	text-decoration:underline;
+}
+ol, ul{margin-bottom: 0.75rem;}
+ol li{list-style: decimal inside;}
+ul li{list-style: circle inside;}
 /* Useful classes
 ---------------------------------------------------------------------------- */
 .disabled{
@@ -139,7 +147,7 @@ time{display: block;}
 	border-bottom: 1px solid #eee;
 }
 
-.link{
+a.link{
 	color: #101010;
 	background: #e0e0e0;
 	margin-left: 4px;
@@ -332,12 +340,12 @@ figured > figcaption{}
 ---------------------------------------------------------------------------- */
 
 .navigation>ul{
-	list-style: none;
 }
 .navigation>ul>li:first-child{
 	border: 0;
 }
 .navigation>ul>li{
+	list-style: none;
 	float: left;
 	padding: 0;
 }

@@ -166,8 +166,16 @@ function edit_post($info){
 /* Slug information
  -------------------------------------------------------------------------- */
 
-function output_to_excerpt($output){
-	$excerpt = substr(strip_tags($output,'<p><a><strong><br>'),0,750) . " ...";
+function output_to_excerpt( $output, $length=750, $max=1000 ){
+	preg_match_all("/<p>(.*)<\/p>/U", $output, $matches);
+	$excerpt = '';
+	foreach($matches[0] as &$match){
+		if(strlen($output) + $strlen($match) >= $max)
+			break;
+		$excerpt .= $match;
+		if(strlen($output) >= $length)
+			break;
+	}	
 	return $excerpt;
 }
 

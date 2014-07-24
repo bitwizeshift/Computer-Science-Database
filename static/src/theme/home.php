@@ -1,3 +1,7 @@
+<?php 
+global $query;
+$recent = $query->query_posts("POST",Query::SORT_DATE_DESC,  3);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,21 +13,28 @@
 	<div id="content" class="container">
 	
 		<div id="banner">
-			<img src="static/img/banner.jpg"/>
+			<img src="static/img/banner.jpg" alt="banner" />
 			<div id="banner-content">
 				<div class="banner-content-inner">
 					<h2>UCSD</h2>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nec accumsan ipsum. Integer gravida et leo eget pulvinar. Ut lorem nisi, dictum non suscipit sit amet, sagittis vel massa. Praesent pellentesque, urna sed ullamcorper lacinia, leo diam hendrerit magna, id venenatis nunc velit a enim</p>
+					<p>UCSD is the University Computer Science database. It is a large source of information for computer-science related articles of information.</p>
+					<p><a href="about">Read more about it</a></p>
 				</div>
 			</div>
 		</div>
 		
 		<div class="panel">
 			<h2>Updated Articles</h2>
-			<h3>Article 1</h3>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nec accumsan ipsum. Integer gravida et leo eget pulvinar. Ut lorem nisi, dictum non suscipit sit amet, sagittis vel massa. Praesent pellentesque, urna sed ullamcorper lacinia, leo diam hendrerit magna, id venenatis nunc velit a enim. Suspendisse potenti. </p>
-			<h3>Article 2</h3>
-			<p>Quisque pellentesque, odio sagittis ullamcorper mollis, turpis lectus feugiat erat, ac fringilla justo libero nec tellus. Vestibulum sed semper metus. Ut pellentesque quam eget tellus facilisis, a ultrices ligula condimentum. Fusce sit amet laoreet dolor. Vivamus at turpis viverra, scelerisque est sed, adipiscing libero. Sed non enim id nunc interdum elementum ut in tellus. Pellentesque facilisis, nulla eu consequat euismod, felis nibh adipiscing lectus, ac scelerisque felis eros eu enim. Aenean felis eros, suscipit consectetur lacus eu, placerat tempor lectus. </p>
+			<?php 
+			if(empty($recent)){
+				echo("<p>There are no articles recently published at this time</p>");
+			}
+			foreach($recent as $post){
+				echo("<h3>{$post['title']} <a class='link' href='article/{$post['slug']}'>View</a></h3>");
+				echo("<p>{$post['excerpt']}</p>");
+			}
+			
+			?>
 		</div>
 		
 		<div class="panel">

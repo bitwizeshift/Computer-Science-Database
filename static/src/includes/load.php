@@ -55,10 +55,11 @@ function admin_resource_exists( $resource ){
 function load_database(){
 	global $query;
 
-	require_once( INCLUDE_PATH . 'database.class.php');
+	require_once( INCLUDE_PATH . 'connection.class.php' );
+	require_once( INCLUDE_PATH . 'query.class.php');
 	if ( isset( $query ) )
 		return;
-	$GLOBALS['query'] = new Query('newsettings.ini');
+	$GLOBALS['query'] = new Query('settings.ini');
 }
 
 /**

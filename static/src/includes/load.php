@@ -128,10 +128,12 @@ function load_current_view(){
 	// Store page and slug information
 	$page = (isset($_GET['page']) ? $_GET['page'] : 'home');
 	$slug = (isset($_GET['slug']) ? $_GET['slug'] : null );
-
+	
+	
 	// If an article is specified
 	if( $page=='article' && $slug != null ){
-		$id = $query->query_term( $slug, "SLUG" );
+		$id = $query->get_posts( array('slug'=>$slug), array('id'), null,1);
+		//$id = $query->query_term( $slug, "SLUG" );
 		if($id){
 			$GLOBALS['g_view'] = new Article( (int) $id );
 		}else{

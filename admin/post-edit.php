@@ -25,7 +25,7 @@ if(isset($_POST['title']) && isset($_GET['action']) && $_GET['action']=='submit'
 	
 	$info = array(
 		"title"   => $_POST['title'],
-		"parent"  => (int) $_POST['parent'],
+		"parent"  => $_POST['parent'] == "NULL" ? null : (int) $_POST['parent'],
 		"excerpt" => output_to_excerpt($_POST['output-content']),
 		"input"   => $_POST['input-content'],
 		"output"  => $_POST['output-content'],
@@ -35,8 +35,7 @@ if(isset($_POST['title']) && isset($_GET['action']) && $_GET['action']=='submit'
 	);
 	
 	if(isset($_GET['id'])){
-		$info['id'] = (int) $_GET['id'];
-		update_post($info, false);
+		update_post($info, (int) $_GET['id']);
 	}else{
 		update_post($info);
 	}
@@ -45,8 +44,9 @@ if(isset($_POST['title']) && isset($_GET['action']) && $_GET['action']=='submit'
 /* Get article information to populate the fields*/
 global $query;
 
-$posts = $query->query_posts("POST");
+$posts = $query->query_posts( "POST", QUERY::SORT_TITLE_ASC );
 
+$id     = http_value("GET", "id", 0);
 $title  = http_value("POST", "title","");
 $input  = http_value("POST", "input-content","");
 $parent = (int) http_value("POST", "parent",0);
@@ -54,8 +54,10 @@ $parent = (int) http_value("POST", "parent",0);
 /* If modifying an article, pull the info or redirect to add new if it doesn't exist*/
 if(isset($_GET['id'])){
 	
+	$fields = array('title','input','parent');
+	
 	$id = (int) $_GET['id'];
-	$post = $query->query_post( $id, true );
+	$post = $query->get_post( $id, $fields );
 	$title = $post['title'];
 	$input = $post['input'];
 	$parent = $post['parent'];
@@ -104,12 +106,12 @@ if(isset($_GET['id'])){
 					<p>
 						<label for="wmd-parent-input">Parent<br>
 						<select type="text" name="parent" id="wmd-parent-input" class="full-size">
-							<option value="0" style="color: #777;">No parent</option>
+							<option value="NULL" style="color: #777;">No parent</option>
 							<?php 
 							foreach($posts as &$post){
 								if($parent==$post['id']){
 									echo("<option value='{$post['id']}' selected='selected'>{$post['title']}</option>");	
-								}else{
+								}elseif($id!=$post['id']){
 									echo("<option value='{$post['id']}'>{$post['title']}</option>");
 								}
 							}

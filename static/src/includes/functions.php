@@ -134,7 +134,6 @@ function hide_string( $string, $visible_length, $fill = "*"){
  * @param string $after[optional]
  * @return array containing all the passed values
  */
-
 function args_to_string( $args,  $separator=',', $before='', $after=''){
 	if( is_object( $args ) ){
 		$arr = get_object_vars( $args );

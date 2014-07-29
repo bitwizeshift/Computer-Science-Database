@@ -1,9 +1,20 @@
 <?php
 
+function has_post(){
+	
+}
+
+function get_posts(){
+	
+}
+
+function get_post(){
+	
+}
+
 class Query extends Connection{
 	
 	/* Sorting constants */
-	
 	const SORT_DATE_ASC    = "date ASC";
 	const SORT_DATE_DESC   = "date DESC";
 	const SORT_TITLE_ASC   = "title ASC";
@@ -13,32 +24,72 @@ class Query extends Connection{
 	const SORT_LOGIN_ASC   = "username ASC";
 	const SORT_LOGIN_DESC  = "username DESC";
 	
+	/* Sorting (Default DESC) */
+	const ORDER_ASC_POST_ID  = 0x01; // 0000 0001
+	const ORDER_ASC_DATE     = 0x02; // 0000 0010
+	const ORDER_ASC_TITLE    = 0x04; // 0000 0100
+	const ORDER_ASC_AUTHOR   = 0x08; // 0000 1000
+	
+	const ORDER_DESC_POST_ID = 0x10; // 0001 0000
+	const ORDER_DESC_DATE    = 0x20; // 0010 0000
+	const ORDER_DESC_TITLE   = 0x40; // 0100 0000
+	const ORDER_DESC_AUTHOR  = 0x80; // 1000 0000
+	
+	/* Post types */
+	const TYPE_POST       = "POST";
+	const TYPE_PRIVATE    = "PRIVATE";
+	const TYPE_REVISION   = "REVISION";
+	const TYPE_SUGGESTION = "SUGGESTION";
+	const TYPE_PAGE       = "PAGES";
+	
+	/* Term types */
+	const TYPE_SLUG       = "SLUG";
+	const TYPE_CATEGORY   = "CATEGORY";
+	const TYPE_TAG        = "TAG";
+		
+	/* Table Attributes */
 	private static $term_attributes = array(
-		"slug",
-		"name",
-		"type"
+		"slug","name","type"
 	);
 	private static $user_attributes = array(
-		"username",
-		"password",
-		"salt",
-		"display_name",
-		"email",
-		"premissions",
+		"username", "password", "salt", "display_name",
+		"email", "premissions"
 	);
 	private static $post_attributes = array(
-		"title",
-		"parent",
-		"type",
-		"excerpt",
-		"input",
-		"output",
-		"date",
-		"user_id"
+		"id", "title", "parent", "type", "excerpt",
+		"input", "output", "date", "user_id"
 	);
-	
+	private static $meta_attributes = array(
+		"meta_key", "meta_value"
+	);
+	/* View Attributes */
+	private static $post_data_fields = array(
+			"id", "parent", "slug", "title", "type",
+			"excerpt", "input", "output", "date"
+	);
 	/* Constructor/Destructor/Initialization
 	 ------------------------------------------------------------------------ */
+	private static function decode_order_by( $orderby ){
+		$orders = array();
+		if( ($orderby & self::ORDER_ASC_POST_ID) == self::ORDER_ASC_POST_ID )
+			$orders[] = "`id` ASC";
+		if( ($orderby & self::ORDER_ASC_DATE) == self::ORDER_ASC_DATE )
+			$orders[] = "`date` ASC";
+		if( ($orderby & self::ORDER_ASC_TITLE) == self::ORDER_ASC_TITLE )
+			$orders[] = "`title` ASC";
+		if( ($orderby & self::ORDER_ASC_AUTHOR) == self::ORDER_ASC_AUTHOR )
+			$orders[] = "`author` ASC";
+		
+		if( ($orderby & self::ORDER_DESC_POST_ID) == self::ORDER_DESC_POST_ID )
+			$orders[] = "`id` DESC";
+		if( ($orderby & self::ORDER_DESC_DATE) == self::ORDER_DESC_DATE )
+			$orders[] = "`date` DESC";
+		if( ($orderby & self::ORDER_DESC_TITLE) == self::ORDER_DESC_TITLE )
+			$orders[] = "`title` DESC";
+		if( ($orderby & self::ORDER_DESC_AUTHOR) == self::ORDER_DESC_AUTHOR )
+			$orders[] = "`author` DESC";
+		return $orders;
+	}
 	
 	/**
 	 * Instantiates a Connection class from the values specified in the
@@ -57,7 +108,10 @@ class Query extends Connection{
 				"terms"          => "terms",
 				"term_relations" => "term_relations",
 				"users"          => "users",
-				"user_meta"      => "user_meta"
+				"user_meta"      => "user_meta",
+				"post_data"		 => "post_data",
+				"post_authors"	 => "post_authors",
+				"post_hierarchy" => "post_hierarchy"
 		);
 		parent::__construct( $settings_file );
 	}
@@ -73,6 +127,154 @@ class Query extends Connection{
 
 	/* Queries/Generation/Existence
 	 ------------------------------------------------------------------------ */
+	
+	/**
+	 * 
+	 * @param unknown $select
+	 * @param unknown $from
+	 * @param unknown $where
+	 * @return multitype:
+	 */
+	public function query_builder( $select, $from, $where ){
+		$table = &$this->tables[$from];
+		$where_str = '';
+		$where_arr = array();
+		$attributes = array();
+		
+		foreach( $where as $attribute => $value ){
+			$where_arr[] = "`{$attribute}` = ?";
+			$attributes[] = $value;
+		}
+		if(!empty($where_arr))
+			$where_str = 'WHERE ' . args_to_string($where_arr, ' AND ');
+		
+		$query = "SELECT " . args_to_string( $select, '`, `','`','` ') . 
+				"FROM `{$table}` " . 
+				$where_str;
+
+		$stmt = $this->dbhandle->prepare( $query );
+		$i = 1;
+		foreach($attributes as &$attribute){
+			$stmt->bindValue($i++,$attribute);
+		}
+		$stmt->execute();
+		
+		return $stmt->fetchAll( PDO::FETCH_ASSOC );
+	}
+	
+	/**
+	 * Gets posts based on the parameters. Key=>Value pairs can be specified 
+	 * in $keys to allow for this to query more than just by id, or it can
+	 * optionally be null
+	 * 
+	 * @param array $keys[optional] (key=>value) pairs to search for
+	 * @param array $fields[optional] the columns to acquire
+	 * @param int $orderby[optional] How it should be sorted
+	 * @param array $limit[optional] array of (posts to draw, index to start at)
+	 * @return multitype:
+	 */
+	public function get_posts( $keys=null, $fields=null, $orderby=null, $limit=null ){
+		if( $fields === null ) $fields = self::$post_data_fields;
+		
+		$post_data = $this->tables['post_data'];
+		$where_str = "";
+
+		if( $keys !== null ){
+			foreach( (array) $keys as $attribute => $value ){
+				$attributes[] = "`{$attribute}` " . ($value===null ? 'is ?' : '= ?');
+				$values[]     = $value;
+			}
+			$where_str = 'WHERE ' . args_to_string( $attributes, ' AND ' );
+		}
+		
+		$query = "SELECT " . args_to_string( $fields, '`, `','`','` ') .
+				"FROM `{$post_data}` " .
+				"{$where_str} ";
+		
+		// ORDER BY
+		if( $orderby !== null ){
+			$orders = self::decode_order_by( $orderby );	
+			$query .= "ORDER BY " . args_to_string( $orders, ', ','',' ' );
+		}
+		
+		// LIMIT
+		if( $limit !== null )
+			$query .= "LIMIT " . args_to_string( (array) $limit, ',' );
+
+		$stmt = $this->dbhandle->prepare( $query );
+		$i = 1;
+		// Bind all the values, if any exist to bind
+		if( $keys !== null ){
+			foreach( (array) $values as &$value ){
+				$stmt->bindValue($i++,$value);
+			}
+		}
+
+		$stmt->execute();
+		return $stmt->fetchAll( PDO::FETCH_ASSOC );
+	}
+	
+	/**
+	 * 
+	 * @param unknown $post_id
+	 * @param string $fields
+	 * @return mixed
+	 */
+	public function get_post( $post_id, $fields=null ){
+		if( $fields === null ) $fields = self::$post_data_fields;
+		
+		$post_data = $this->tables['post_data'];
+		
+		$query = "SELECT " . args_to_string($fields, '`, `','`','` ') .
+				"FROM `{$post_data}` " .
+				"WHERE `id` = ?";
+		
+		$stmt = $this->dbhandle->prepare( $query );
+		$stmt->bindValue( 1, $post_id, PDO::PARAM_INT );
+		$stmt->execute();
+		
+		return $stmt->fetch( PDO::FETCH_ASSOC );
+	}
+	
+	/**
+	 * 
+	 * @param unknown $parent
+	 * @param string $fields
+	 * @return multitype:
+	 */
+	public function get_children( $parent, $fields=null ){
+		return $this->get_posts( array('parent'=>$parent), $fields );
+	}
+	
+	/**
+	 * 
+	 * @param unknown $post_id
+	 * @return multitype:
+	 */
+	public function get_authors( $post_id ){
+		$author_table = $this->tables['post_authors'];
+		
+		$query = "SELECT `display_name` " .
+				"FROM {$author_table} " .
+				"WHERE post_id = ?";
+		
+		$stmt = $this->dbhandle->prepare( $query );
+		$stmt->bindValue( 1, $post_id, PDO::PARAM_INT );
+		$stmt->execute();
+		
+		return $stmt->fetchAll( PDO::FETCH_COLUMN );
+	}
+	
+	public function get_options(){
+		$options_table = &$this->tables['options'];
+		
+		$query = "SELECT `option_name`, `option_value` " .
+				"FROM `{$options_table}`";
+		
+		$stmt = $this->dbhandle->prepare($query);
+		$stmt->execute();
+		return $stmt->fetchAll( PDO::FETCH_ASSOC );
+	}
 	
 	public function search_for_posts( $term ){
 		$post_table = &$this->tables['posts'];
@@ -98,26 +300,10 @@ class Query extends Connection{
 		return $posts;
 	}
 	
-	public function build_post_query( $attributes, $keys ){
-		$use_terms;
-		$use_users;
-		foreach($attributes as &$attribute){
-			if(in_array($attribute,self::$term_attributes)){
-				$use_terms = true;
-			}elseif(in_array($attribute,self::$user_attributes)){
-				$use_users = true;
-			}
-		}
-		
-		
-		$SELECT = "";
-		$FROM = "";
-	}
-	
 	public function query_options(){
 		$options_table = &$this->tables['options'];
 		
-		$query = "SELECT option_name, option_value " . 
+		$query = "SELECT `option_name`, `option_value` " . 
 				"FROM `{$options_table}`";
 		
 		$stmt = $this->dbhandle->prepare($query);
@@ -289,6 +475,179 @@ class Query extends Connection{
 	/* Insertions
 	 ------------------------------------------------------------------------ */
 	
+	public function add_new_post( $post, $type=QUERY::TYPE_POST ){
+		// Prepare the tables
+		$post_table = &$this->tables['posts'];
+		$term_table = &$this->tables['terms'];
+		$relations  = &$this->tables['term_relations'];
+		
+		// Prepare the parameters
+		$p_params = array(
+			":title"  => &$post['title'],
+			":parent" => &$post['parent'],
+			":excerpt"=> &$post['excerpt'],
+			":type"   => $type,
+			":input"  => &$post['input'],
+			":output" => &$post['output'],
+			":date"   => &$post['date'],
+			":user_id"=> &$post['user_id']
+		);
+				
+		// Prepare the insert statements
+		$p_in = "INSERT INTO `{$post_table}`(`title`, `parent`, `excerpt`, `type`, `input`, `output`, `date`, `user_id`)" . 
+				"VALUES(:title, :parent, :excerpt, :type, :input, :output, :date, :user_id)";
+		
+		$t_in = "INSERT INTO `{$term_table}`(`slug`,`name`, `type`) " .
+				"VALUES (?, ?, ?)";
+		
+		$r_in = "INSERT INTO `{$relations}`(`term_id`,`post_id`) " . 
+				"VALUES (?, ?)";
+		
+		try{
+			// Start this transaction
+			$this->dbhandle->beginTransaction();
+			
+			// Add the new post
+			$stmt = $this->dbhandle->prepare( $p_in );
+			$stmt->execute( $p_params );
+			
+			$post_id = (int) $this->dbhandle->lastInsertId();
+			
+			// Add the new term slug
+			$stmt = $this->dbhandle->prepare( $t_in );
+			$stmt->bindValue( 1, $post['slug'], PDO::PARAM_STR );
+			$stmt->bindValue( 2, $post['title'], PDO::PARAM_STR );
+			$stmt->bindValue( 3, 'SLUG', PDO::PARAM_STR );
+			$stmt->execute();
+			
+			$term_id = (int) $this->dbhandle->lastInsertId();
+			
+			// Add the new relationship between the two
+			
+			$stmt = $this->dbhandle->prepare( $r_in );
+			$stmt->bindValue( 1, $term_id, PDO::PARAM_INT );
+			$stmt->bindValue( 2, $post_id, PDO::PARAM_INT );
+			$stmt->execute();
+			
+			// Commit the changes
+			$this->dbhandle->commit();
+			return true;
+		}catch(Exception $e){
+			// Rollback changes if an error occurs
+			$this->dbhandle->rollBack();
+			set_message(Message::SEVERE, $e->getMessage());
+			return false;
+		}
+	}
+	
+	public function modify_post( $post_id, $post ){
+		// Prepare the tables
+		$post_table = &$this->tables['posts'];
+		$term_table = &$this->tables['terms'];
+		$relations  = &$this->tables['term_relations'];
+		
+		// Prepare the parameters
+		$p_params = array(
+			":title"  => &$post['title'],
+			":parent" => &$post['parent'],
+			":excerpt"=> &$post['excerpt'],
+			":type"   => Query::TYPE_POST,
+			":input"  => &$post['input'],
+			":output" => &$post['output'],
+			":date"   => &$post['date'],
+			":user_id"=> &$post['user_id'],
+			":id"     => $post_id
+		);
+		
+		$t_params = array(
+			":slug" => &$post['slug'],
+			":name" => &$post['title'],
+			":id"   => $post_id
+		);
+		
+		// Prepare the insert statements
+		$r_in = "INSERT INTO `{$post_table}`(`title`, `parent`, `excerpt`, `type`, `input`, `output`, `date`, `user_id`) " . 
+				"SELECT `title`, ? as `id`, `excerpt`,'REVISION' as `type`,`input`,`output`,`date`,`user_id` " .
+				"FROM {$post_table} " .
+				"WHERE `id` = ? ";
+		
+		$p_mod = "UPDATE {$post_table} " .
+				"SET `title` = :title, `parent` = :parent, " .
+				"    `excerpt` = :excerpt, `type` = :type, " .
+				"    `input` = :input, `output` = :output, " .
+				"    `user_id` = :user_id, `date` = :date "  .
+				"WHERE `id` = :id";
+		
+		$t_mod = "UPDATE {$term_table} JOIN {$relations} " .
+				"ON `term_id` = `id` " .
+				"SET `slug` = :slug, `name` = :name " .
+				"WHERE `post_id` = :id";
+		try{
+			// Start this transaction
+			$this->dbhandle->beginTransaction();
+			
+			// Insert revision first
+			$stmt = $this->dbhandle->prepare( $r_in );
+			$stmt->bindValue( 1, $post_id, PDO::PARAM_INT );
+			$stmt->bindValue( 2, $post_id, PDO::PARAM_INT );
+			$stmt->execute();
+			
+			// Alter the newest post
+			$stmt = $this->dbhandle->prepare( $p_mod );
+			$stmt->execute( $p_params );
+			
+			// Alter the term
+			$stmt = $this->dbhandle->prepare( $t_mod );
+			$stmt->execute( $t_params );
+			
+			// Commit the changes
+			$this->dbhandle->commit();
+			return true;
+		}catch(Exception $e){
+			$this->dbhandle->rollBack();
+			return false;
+		}
+	}
+	
+	public function delete_post( $post_id ){
+		// Prepare the tables
+		$post_table = &$this->tables['posts'];
+		$term_table = &$this->tables['terms'];
+		$relations  = &$this->tables['term_relations'];
+		
+		$p_del = "DELETE FROM {$post_table} " .
+				"WHERE `id` = ?";
+				
+		$t_del = "DELETE FROM `{$term_table}` \n" .
+				"USING `{$term_table}` INNER JOIN {$relations} \n" .
+				"ON `term_id` = `id` \n" .
+				"WHERE `post_id` = ? AND `type` = 'SLUG'";	
+				
+		try{
+			// Start this transaction
+			$this->dbhandle->beginTransaction();
+
+			// Delete the term first (cascading to delete the relation)
+			$stmt = $this->dbhandle->prepare( $t_del );
+			$stmt->bindvalue( 1, $post_id, PDO::PARAM_INT );
+			$stmt->execute();
+			
+			// Delete the post
+			$stmt = $this->dbhandle->prepare( $p_del );
+			$stmt->bindValue( 1, $post_id, PDO::PARAM_INT );
+			$stmt->execute();
+			
+			// Commit the changes
+			$this->dbhandle->commit();
+			return true;
+		}catch(Exception $e){
+			// Rollback changes if an error occurs
+			$this->dbhandle->rollBack();
+			set_message(Message::SEVERE, $e->getMessage());
+			return false;
+		}
+	}
+	
 	/**
 	 * Inserts a post into the database, and returns the id of the insert
 	 * 
@@ -447,6 +806,29 @@ class Query extends Connection{
 	
 	/**
 	 * 
+	 * @param unknown $id
+	 * @param unknown $type
+	 * @return boolean
+	 */
+	public function change_post_type( $id, $type ){
+		$post_table = &$this->tables['posts'];
+	
+		$params = array(
+			":id" => $id,
+			":type" => $type
+		);
+		
+		$query = "UPDATE `{$post_table}` " .
+				"SET `type` = :type " .
+				"WHERE `id` = :id ";
+		
+		$stmt = $this->dbhandle->prepare( $query );
+		return $stmt->execute( $params );
+	}
+	
+	
+	/**
+	 * 
 	 * @param unknown $post
 	 */
 	public function update_post( $post, $type ){
@@ -570,22 +952,7 @@ class Query extends Connection{
 	
 	/* Deletion
 	 ------------------------------------------------------------------------ */
-	
-	/**
-	 * 
-	 * @param unknown $id
-	 * @return boolean
-	 */
-	public function delete_post( $id ){
-		$post_table = &$this->tables['posts'];
-		$query = "DELETE FROM {$post_table} " . 
-				"WHERE id = ?";
 		
-		$stmt = $this->dbhandle->prepare( $query );
-		$stmt->bindValue( 1, $id, PDO::PARAM_INT );
-		return $stmt->execute();
-	}
-	
 	/**
 	 * 
 	 * @param unknown $id
@@ -618,6 +985,18 @@ class Query extends Connection{
 	
 	/* Existence
 	 ------------------------------------------------------------------------ */
+	
+	public function term_exists_outside_id( $slug, $post_id ){
+		$post_data = &$this->tables['post_data'];
+		$query = "SELECT 1 " .
+				"FROM {$post_data} " .
+				"WHERE slug = ? AND id <> ?";
+		$stmt = $this->dbhandle->prepare( $query );
+		$stmt->bindValue( 1, $slug, PDO::PARAM_STR );
+		$stmt->bindValue( 2, $post_id, PDO::PARAM_INT );
+		$stmt->execute();
+		return (bool) $stmt->fetchColumn();
+	}
 	
 	/**
 	 * 

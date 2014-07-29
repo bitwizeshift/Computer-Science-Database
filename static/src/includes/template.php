@@ -200,4 +200,28 @@ function is_page(){
 	return (bool) $g_view->is_page();
 }
 
+function create_menu($id,$depth=null){
+	global $query;
+	static $fields = array('id','title','slug');
+	
+	if( isset($depth) ){
+		// If at the lowest depth, stop
+		if( $depth==0 ) return;
+		// otherwise, decrement and continue
+		--$depth;
+	}
+
+	$children = $query->get_children( $id, $fields );
+	
+	if(!empty($children)){
+		echo("<ul class='tree'>");
+		foreach($children as $child){
+			echo("<li><a href='article/{$child['slug']}' title='{$child['title']}'> {$child['title']} </a>");
+			create_menu( $child['id'], $child );
+			echo("</li>");
+		}
+		echo("</ul>");
+	}
+}
+
 ?>

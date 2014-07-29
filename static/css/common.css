@@ -119,8 +119,12 @@ a:hover, a:focus{
 	text-decoration:underline;
 }
 ol, ul{margin-bottom: 0.75rem;}
-ol li{list-style: decimal inside;}
-ul li{list-style: circle inside;}
+ol{list-style: decimal inside;}
+ul{list-style: circle inside;}
+li>ul{
+	margin-bottom: 0;
+	margin-left: 1rem;
+}
 /* Useful classes
 ---------------------------------------------------------------------------- */
 .disabled{

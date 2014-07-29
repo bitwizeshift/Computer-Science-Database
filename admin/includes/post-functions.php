@@ -49,21 +49,25 @@ function validate_email($email){
 
 function validate_title( $title ){
 	if($title==""){
-		set_message(Message::ERROR, "Title can't be empty");
+		set_message( Message::ERROR, "Title can't be empty" );
 		return false;
 	}
 	return true;
 }
 
-function validate_slug( $slug ){
+function validate_slug( $slug, $id = null ){
 	global $query;
 	if($slug==""){
-		set_message(Message::ERROR, "Slug can't be empty. The title must have non-special characters.");
+		set_message( Message::ERROR, "Slug can't be empty. The title must have non-special characters." );
 		return false;
 	}
-	$exists = $query->term_exists($slug, "SLUG");
+	if(!isset($id)){
+		$exists = $query->term_exists( $slug, "SLUG" );
+	}else{
+		$exists = $query->term_exists_outside_id( $slug, $id );
+	}
 	if($exists){
-		set_message(Message::ERROR, "Slug already in use.");
+		set_message( Message::ERROR, "Slug already in use." );
 		return false;
 	}
 	return true;
@@ -76,7 +80,22 @@ function validate_parent( $parent ){
 
 	$exists = $query->post_exists( $parent );
 	if(!$exists){
-		set_message(Message::ERROR, "Parent must exist.");
+		set_message( Message::ERROR, "Parent must exist." );
+		return false;
+	}
+	return true;
+}
+
+function validate_input( $id, $input ){
+	global $query;
+	if(empty($input) || strlen($input)==0){
+		set_message( Message::ERROR, "Post is empty." );
+		return false;
+	}
+	
+	$content = $query->query_post( $id, true );
+	if($content['input'] == $input ){
+		set_message( Message::ERROR, "No content changed, no need to publish");
 		return false;
 	}
 	return true;
@@ -105,19 +124,23 @@ function is_edit_article(){
 /* Inserting new article
  -------------------------------------------------------------------------- */
 
-function update_post($info, $add_new = true){
+function update_post($info, $post_id = null){
 	/* Validate Parameters */
 	if(!validate_title($info['title']))
 		return;
-	//if(!validate_slug($info['slug']))
-	//	return;
 	if(!validate_parent($info['parent']))
 		return;
 	
-	if($add_new){
+	if( $post_id === null ){
+		if(!validate_slug( $info['slug'] ))
+			return;
 		add_new_post($info);
 	}else{
-		edit_post($info);
+		if( !validate_slug( $info['slug'], $post_id ) )
+			return;
+		if( !validate_input( $post_id, $info['input'] ) )
+			return;
+		edit_post($post_id, $info);
 	}
 }
 
@@ -127,17 +150,9 @@ function update_post($info, $add_new = true){
  */
 function add_new_post($info){
 	global $query;
-
-	/* Insert the post*/
-	$post_id = $query->insert_post( $info, "POST" );
 	
-	/* Insert the revision */
-	$info['parent'] = $post_id;
-	$query->insert_post( $info, "REVISION" );
-
-	$term_id = $query->insert_term( $info['slug'], $info['title'] );
-	$query->insert_term_relation( $term_id, $post_id, "SLUG" );
-		
+	$query->add_new_post( $info, Query::TYPE_POST );
+	
 	// Inform the user that it was successfully posted
 	set_message(Message::SUCCESS, "Article posted successfully");
 }
@@ -146,18 +161,21 @@ function add_new_post($info){
  * 
  * @param unknown $info
  */
-function edit_post($info){
+function edit_post( $post_id, $info ){
 	global $query;
-
-	/* Update the original post */
+	
+	$query->modify_post( $post_id, $info );
+	/*
+	// Update the original post
 	$query->update_post( $info, "POST" );
 	
-	/* Add the new revision */
+	// Add the new revision
 	$info['parent'] = $info['id'];
 	$query->insert_post( $info, "REVISION" );
 	
-	/* Update term (slug) */
+	// Update term (slug)
 	$query->update_slug( $info['id'], $info['slug'], $info['title'] );
+	*/
 	
 	// Inform the user that it was successfully updated
 	set_message(Message::SUCCESS, "Article updated successfully");
@@ -166,14 +184,22 @@ function edit_post($info){
 /* Slug information
  -------------------------------------------------------------------------- */
 
-function output_to_excerpt( $output, $length=750, $max=1000 ){
-	preg_match_all("/<p>(.*)<\/p>/U", $output, $matches);
+function output_to_excerpt( $output, $expected=500, $max=750 ){
+	preg_match_all("/<p>(.*)<\/p>/U", $output, $matches, PREG_SET_ORDER);
 	$excerpt = '';
-	foreach($matches[0] as &$match){
-		if(strlen($output) + $strlen($match) >= $max)
+	$length = 0;
+	foreach($matches as &$match){
+		$content = strip_tags( trim($match[1]) );
+		$match_length = strlen( $content );
+		if($length + $match_length >= $max){
+			$excerpt .= '<p>' . substr( $content, 0, $max - $length - 3 ) . '...</p>';
 			break;
-		$excerpt .= $match;
-		if(strlen($output) >= $length)
+		}else{
+			$excerpt .= "<p>{$content}</p>";
+		}
+		
+		$length += $match_length;
+		if($length >= $expected)
 			break;
 	}	
 	return $excerpt;

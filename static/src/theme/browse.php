@@ -13,13 +13,7 @@
   	<div class="panel">
   		<h2>Browse Articles</h2>
   		<?php 
-  			global $query;
-			$results = $query->query_posts("POST", 'title');
-			echo "<ul>";
-			foreach($results as &$row){
-				echo "<li><a href='article/{$row['slug']}'>{$row['title']}</a></li>";
-			}
-			echo "</ul>";
+  			create_menu( null );
   		?>
   	</div>
   </div>

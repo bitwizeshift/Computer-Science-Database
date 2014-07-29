@@ -117,9 +117,11 @@ class Article implements View{
 	 */
 	private function _access_article_data( $id ){
 		global $query;
+		static $fields = array('title','excerpt','output','date');
 		
 		$this->is_article = true;
-		$post = $query->query_post( $id );
+
+		$post = $query->get_post( $id , $fields );
 		
 		$this->title          = $post['title'];
 		$this->excerpt        = $post['excerpt'];
@@ -128,11 +130,11 @@ class Article implements View{
 		$this->date_modified  = $post['date'];
 		$this->date_created   = $post['date'];
 		
-		$authors = $query->query_authors( $id );
+		$authors = $query->get_authors( $id );
 		
 		$this->authors = $authors;
 		
-		$this->children = $query->query_children( $id );
+		$this->children = $query->get_children( $id );
 				
 	}
 	

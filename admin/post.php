@@ -26,15 +26,24 @@ $page     = (int) http_value("GET", "page",1);
 $page     = $page < 1 ? 1 : $page;
 $index = ($page-1) * $per_page;
 
-$stmt = "SELECT ucsd_posts.id,`title`,`display_name`,`modified` 
-		 FROM `ucsd_posts` JOIN `ucsd_users` 
-		 WHERE ucsd_posts.author_id = ucsd_users.id AND ucsd_posts.status = \"POST\"
-		 ORDER BY `modified` DESC 
-		 LIMIT ?,?";
-
 $posts = $query->query_posts( "POST", Query::SORT_DATE_DESC , $per_page, $index );
 
 $total = $query->query_total_posts("POST");
+
+$action = http_value("GET","action",null);
+$id     = http_value("GET","id",null);
+
+if($action=="delete" && $id !== null){
+	$query->delete_post( $id );
+	if(!is_message_set()){
+		redirect_address("admin/post.php?delete=success");
+	}
+}
+
+if(isset($_GET['delete']) && $_GET['delete'] == 'success'){
+	set_message(Message::INFO,"Post deleted. Revisions will still exist in the database.");
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -48,6 +57,7 @@ $total = $query->query_total_posts("POST");
 <?php require('admin-header.php'); ?>
 <div id="wrapper">
 	<div id="content" class="container">
+	<?php print_messages(1); ?>
 	<div class="panel">
 		<h2 class="heading">Posts <a class="link" href="admin/post-edit.php">Add New</a></h2>
 		<table class='table table-striped table-bordered'>
@@ -59,15 +69,27 @@ $total = $query->query_total_posts("POST");
 			</tr>
 		</thead>
 		<tbody>
-<?php 
-foreach( (array) $posts as &$post){
-	echo("<tr>");
-	echo("<td><a href='admin/post-edit.php?id={$post['id']}'>{$post['title']}</a></td>");
-	echo("<td>{$post['author']}</td>");
-	echo("<td><time datetime='{$post['date']}'>"  . date("F jS, Y",strtotime($post['date'])) . "</time>" . "<small>" . date("h:i:sa",strtotime($post['date'])) . "</small></td>");
-	echo("</tr>");
-}
-?>
+		<?php foreach( (array) $posts as &$post){ ?>
+			<tr>
+				<td>
+					<p>
+						<a href='admin/post-edit.php?id=<?=$post['id']?>'><?=$post['title']?></a>
+						<a href='admin/post.php?action=delete&id=<?=$post['id']?>' class='link right'>Delete</a>
+					</p>
+				</td>
+				<td>
+					<?=$post['author'] ?>
+				</td>
+				<td>
+					<time datetime='<?=$post['date']?>'>  
+						<?=date("F jS, Y",strtotime($post['date'])) ?>
+					</time>
+					<small>
+						<?=date("h:i:sa",strtotime($post['date'])) ?>
+					</small>
+				</td>
+			</tr>
+		<?php } ?>
 		</tbody>
 	</table>
 	<?php generate_pagination($page, $total, $per_page); ?>

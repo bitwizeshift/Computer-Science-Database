@@ -1,6 +1,8 @@
 <?php 
 global $query;
-$recent = $query->query_posts("POST",Query::SORT_DATE_DESC,  3);
+$fields = array('slug','title','excerpt');
+$recent   = $query->get_posts( null, $fields, Query::ORDER_DESC_DATE, 3);
+$featured = null;// $query->query_featured(3);
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,25 +26,28 @@ $recent = $query->query_posts("POST",Query::SORT_DATE_DESC,  3);
 		</div>
 		
 		<div class="panel">
-			<h2>Updated Articles</h2>
+			<h2>Recently Updated Articles</h2>
 			<?php 
 			if(empty($recent)){
 				echo("<p>There are no articles recently published at this time</p>");
+			}else{
+				foreach($recent as $post){
+					echo("<h3>{$post['title']} <a class='link' href='article/{$post['slug']}'>View</a></h3>");
+					echo("<p>{$post['excerpt']}</p>");
+				}
 			}
-			foreach($recent as $post){
-				echo("<h3>{$post['title']} <a class='link' href='article/{$post['slug']}'>View</a></h3>");
-				echo("<p>{$post['excerpt']}</p>");
-			}
-			
 			?>
 		</div>
 		
 		<div class="panel">
 			<h2>Featured Article</h2>
-			<h3>Article 3</h3>
-			<p>In pretium, enim et dapibus auctor, metus eros tincidunt dolor, quis feugiat nisi sapien quis erat. Donec orci ligula, condimentum sit amet ligula a, sollicitudin interdum justo. Nulla facilisis, mi id ullamcorper congue, sem justo accumsan arcu, et faucibus quam nulla vel nulla.</p>
-			<h3>Article 4</h3>
-			<p>Nam nec rhoncus dui. Nunc posuere purus lorem, hendrerit egestas ligula suscipit accumsan. Vestibulum id massa ac odio malesuada cursus. Cras bibendum justo nec erat pellentesque, id sodales urna fermentum. Vivamus varius turpis metus, quis facilisis metus consequat rhoncus. Nunc velit odio, consequat et hendrerit hendrerit, porta vel magna.</p>
+			<?php 
+			if(empty($featured)){
+				echo("<p>There are no featured articles at this time</p>");
+			}else{
+
+			}
+			?>
 		</div>
 		
 	</div>

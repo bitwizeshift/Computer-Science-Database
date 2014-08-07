@@ -87,19 +87,14 @@ require_once( INCLUDE_PATH . 'load.php');
 load_database();
 load_asset_manager();
 load_site_info();
-
-
 require( INCLUDE_PATH . 'session.php' );
 require( INCLUDE_PATH . 'template.php' );
 require( INCLUDE_PATH . 'template-loader.php' );
 require( INCLUDE_PATH . 'template-general.php' );
 require( INCLUDE_PATH . 'template-link.php' );
-
 // Include 
 require( INCLUDE_PATH . 'view.interface.php' );
 require( INCLUDE_PATH . 'page.class.php' );
 require( INCLUDE_PATH . 'article.class.php' );
 require( INCLUDE_PATH . 'functions.php' );
 require( THEME_PATH . 'functions.php' );
-
-

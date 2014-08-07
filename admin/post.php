@@ -83,10 +83,11 @@ if(isset($_GET['delete']) && $_GET['delete'] == 'success'){
 				<td>
 					<time datetime='<?=$post['date']?>'>  
 						<?=date("F jS, Y",strtotime($post['date'])) ?>
+						<br>
+						<small>
+							<?=date("h:i:sa",strtotime($post['date'])) ?>
+						</small>
 					</time>
-					<small>
-						<?=date("h:i:sa",strtotime($post['date'])) ?>
-					</small>
 				</td>
 			</tr>
 		<?php } ?>

@@ -108,47 +108,80 @@ body{
 
 .wmd-button-row 
 {
-	position: relative; 
 	margin-left: 5px;
 	margin-right: 5px;
 	margin-bottom: 5px;
 	margin-top: 10px;
 	padding: 0px;  
-	height: 20px;
+	height: 25px;
 }
 
 .wmd-spacer
 {
 	width: 1px; 
-	height: 20px; 
-	margin-left: 14px;
+	height: 25px; 
+	margin-left: 7px;
+	margin-right: 7px;
 	
-	position: absolute;
 	background-color: Silver;
 	display: inline-block; 
 	list-style: none;
 }
 
 .wmd-button {
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     padding-left: 2px;
     padding-right: 3px;
-    position: absolute;
     display: inline-block;
     list-style: none;
     cursor: pointer;
+    left: 0!important;
+}
+.wmd-button:hover{
+	background: #eee;
+}
+.wmd-button > span{
+	position: relative;
 }
 
-.wmd-button > span {
-    background-image: url(wmd-buttons.png);
-    background-repeat: no-repeat;
-    background-position: 0px 0px;
-    width: 20px;
-    height: 20px;
+.wmd-button > span,
+.wmd-button > span:before{
+	width: 25px;
+    height: 25px;
+    font-size: 16px;
+    text-align:center;
     display: inline-block;
 }
+.wmd-button>span:before{
+	position: absolute;
+	left: 0;
+	top: 0;
+}
 
+.wmd-button > span:before {
+    vertical-align: baseline;
+    font-family: 'icomoon';
+    speak: none;
+}
+#wmd-bold-button > span:before{ content: '\e657'; }
+#wmd-italic-button > span:before{ content: '\e659'; }
+#wmd-underline-button > span:before{ content: '\e658';}
+#wmd-strikethrough-button > span:before{ content: '\e65a';}
+#wmd-superscript-button > span:before{ content: '\e640'; }
+#wmd-subscript-button > span:before{ content: '\e641'; }
+#wmd-math-button > span:before{ content: '\e65c'; }
+#wmd-link-button > span:before{ content: '\e64c'; }
+#wmd-quote-button > span:before{ content: '\e63c'; }
+#wmd-code-button > span:before{ content: '\e67d'; }
+#wmd-image-button > span:before{ content: '\e604'; }
+#wmd-olist-button > span:before{ content: '\e649'; }
+#wmd-ulist-button > span:before{ content: '\e648'; }
+#wmd-heading-button > span:before{ content: '\e656'; }
+#wmd-hr-button > span:before{}
+#wmd-undo-button > span:before{ content: '\e632'; }
+#wmd-redo-button > span:before{ content: '\e633'; }
+/*
 .wmd-spacer1
 {
     left: 50px;
@@ -160,7 +193,7 @@ body{
 .wmd-spacer3
 {
     left: 300px;
-}
+}*/
 
 .wmd-prompt-background
 {

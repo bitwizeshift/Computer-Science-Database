@@ -626,6 +626,9 @@ else
             //    $text .= "<tbody>\n";
                   text += "<tbody>\n";
             //    foreach ($rows as $row) {
+                  
+                  
+                  
                   for ( var i=0; i < rows.length; i++ ) {
             //      # Parsing span elements, including code spans, character escapes, 
             //      # and inline HTML tags, so that pipes inside those gets ignored.

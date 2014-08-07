@@ -3,41 +3,6 @@
  * 
  */
 
-/* Existence functions (for convenience)
- -------------------------------------------------------------------------- */
-
-/**
- * Check if normal resource exists
- *
- * @param string $resource the name of the resource
- * @return boolean true if file exists, false otherwise
- * @since 0.2
- */
-function resource_exists( $resource ){
-	return file_exists( INCLUDE_PATH . $resource );
-}
-
-/**
- * Check if theme resource exists
- *
- * @param string $resource the name of the resource
- * @return boolean true if file exists, false otherwise
- * @since 0.2
- */
-function theme_resource_exists( $resource ){
-	return file_exists( THEME_PATH . $resource );
-}
-/**
- * Check if admin resource exists
- *
- * @param string $resource the name of the resource
- * @return boolean true if file exists, false otherwise
- * @since 0.2
- */
-function admin_resource_exists( $resource ){
-	return file_exists( ADMIN_PATH . $resource );
-}
-
 /* Object loading/initializing
  -------------------------------------------------------------------------- */
 
@@ -108,6 +73,7 @@ function load_query_information(){
 	$defaults = array("p"              => 1,
 					  "posts_per_page" => 10,
 					  "page"           => "home",
+					  "id"             => null,
 					  "slug"           => null,
 					  "search"         => null,
 					  "sortby"         => "date");
@@ -132,7 +98,8 @@ function load_current_view(){
 	
 	// If an article is specified
 	if( $page=='article' && $slug != null ){
-		$id = $query->get_posts( array('slug'=>$slug), array('id'), null,1);
+		$result = $query->get_posts( array('slug'=>$slug), array('id'), null,1);
+		$id = isset($result[0]['id'])?$result[0]['id']:null;
 		//$id = $query->query_term( $slug, "SLUG" );
 		if($id){
 			$GLOBALS['g_view'] = new Article( (int) $id );
@@ -142,7 +109,6 @@ function load_current_view(){
 		// If the pages
 	}elseif( isset($GLOBALS['g_pages'][$page]) ){
 		$GLOBALS['g_view'] = $GLOBALS['g_pages'][$page];
-		// Otherwise the page must be an error
 	}else{
 		$GLOBALS['g_view'] = $GLOBALS['g_pages']['404'];
 	}
@@ -151,5 +117,5 @@ function load_current_view(){
 function load_page(){
 	global $g_view;
 	load_current_view();
-	require( THEME_PATH . $g_view->get_resource());
+	include( THEME_PATH . $g_view->get_resource());
 }

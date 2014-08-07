@@ -105,7 +105,7 @@ if(isset($_GET['id'])){
 					<textarea name="output-content" id="wmd-output" class="removed"></textarea>
 					<p>
 						<label for="wmd-parent-input">Parent<br>
-						<select type="text" name="parent" id="wmd-parent-input" class="full-size">
+						<select type="text" name="parent" id="wmd-parent-input">
 							<option value="NULL" style="color: #777;">No parent</option>
 							<?php 
 							foreach($posts as &$post){

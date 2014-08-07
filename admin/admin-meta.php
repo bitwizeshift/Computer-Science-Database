@@ -29,3 +29,7 @@ MathJax.Hub.Config({
 <!-- End -->
 <link rel="stylesheet" type="text/css" href="static/css/common.css?ver=1.0" />
 <link rel="stylesheet" type="text/css" href="admin/css/style.css?ver=1.0"/>
+<!--[if lt IE 9]>
+	<script src="statics/js/html5shiv.js"></script>
+	<script src="static/js/IE9.min.js"></script>
+<![endif]-->

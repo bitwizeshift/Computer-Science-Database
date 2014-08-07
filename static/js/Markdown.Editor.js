@@ -36,7 +36,7 @@
         subscriptexample: "subscript text",
         
         superscript: "Superscript <sup> Ctrl+Shift++",
-        supserscriptexample: "superscript text",
+        superscriptexample: "superscript text",
         
         math: "Math Ctrl+M",
         mathexample: "math text",
@@ -61,10 +61,12 @@
         ulist: "Bulleted List <ul> Ctrl+U",
         litem: "List item",
 
+        
         heading: "Heading <h1>/<h2> Ctrl+H",
         headingexample: "Heading",
-
+		/*
         hr: "Horizontal Rule <hr> Ctrl+R",
+        */
 
         undo: "Undo - Ctrl+Z",
         redo: "Redo - Ctrl+Y",
@@ -1286,9 +1288,11 @@
                     case "h":
                         doClick(buttons.heading);
                         break;
+                    /*
                     case "r":
                         doClick(buttons.hr);
                         break;
+                    */
                     case "y":
                         doClick(buttons.redo);
                         break;
@@ -1515,8 +1519,11 @@
             buttons.ulist = makeButton("wmd-ulist-button", getString("ulist"), "-140px", bindCommand(function (chunk, postProcessing) {
                 this.doList(chunk, postProcessing, false);
             }));
+            
             buttons.heading = makeButton("wmd-heading-button", getString("heading"), "-160px", bindCommand("doHeading"));
+            /*
             buttons.hr = makeButton("wmd-hr-button", getString("hr"), "-180px", bindCommand("doHorizontalRule"));
+            */
             makeSpacer(4);
             buttons.undo = makeButton("wmd-undo-button", getString("undo"), "-200px", null);
             buttons.undo.execute = function (manager) { if (manager) manager.undo(); };
@@ -1591,41 +1598,71 @@
     };
     
     commandProto.doMath = function (chunk, postProcessing) {
-    	//chunk.trimWhitespace();
-    	chunk.selection = chunk.selection.replace(/\n{2,}/g, "\n");
-    	if(!chunk.selection){
-    		chunk.selection = this.getString("mathexample");
-    	}
-    	chunk.after = "$$" + chunk.after.replace(/^([*_]*)/, "");
-        chunk.before = chunk.before.replace(/(\s?)$/, "") + "$$";
+    	return this.doCommand(chunk, postProcessing, '$',2,this.getString('mathexample'));
     };
     
     // Processes underline, returning underlined text
     commandProto.doUnderline = function (chunk, postProcessing){
-    	return;
+    	return this.doCommand(chunk, postProcessing, '_',2,this.getString('underlineexample'));
     };
     
     // Processes strikethrough, returning strike-through text
     commandProto.doStrikethrough = function (chunk, postProcessing){
-    	return;
+    	return this.doCommand(chunk, postProcessing, '=',2,this.getString('strikethroughexample'));
     };
     
     commandProto.doSuperscript = function(chunk, postProcessing){
-    	return;
+    	return this.doCommand(chunk, postProcessing, "\^",1,this.getString('superscriptexample'));
     };
     
     commandProto.doSubscript = function(chunk, postProcessing){
-    	return;
+    	return this.doCommand(chunk, postProcessing, '_',1,this.getString('subscriptexample'));
     };
+    
+    commandProto.doCommand = function(chunk, postProcessing, char, nChars, insertText){
+    	// Get rid of whitespace and fixup newlines.
+    	chunk.trimWhitespace();
+    	chunk.selection = chunk.selection.replace(re("\n{2,}","g"), "\n");
+    	
+    	var charsBefore = new re("(\\" + char + "*$)").exec(chunk.before)[0];
+    	var charsAfter  = new re("(^\\" + char + "*)").exec(chunk.after)[0];
+    	
+    	var prevChars = Math.min(charsBefore.length, charsAfter.length);
+    	
+    	if((prevChars >= nChars)){
+    		chunk.before = chunk.before.replace(re("[" + char + "]{" + nChars + "}$", ""), "");
+            chunk.after = chunk.after.replace(re("^[" + char + "]{" + nChars + "}", ""), "");
+    	}
+    	else if (!chunk.selection && charsAfter){
+            chunk.after = chunk.after.replace(/^([*_]*)/, "");
+            chunk.before = chunk.before.replace(/(\s?)$/, "");
+            var whitespace = re.$1;
+            chunk.before = chunk.before + charsAfter + whitespace;
+    	}
+    	else{
+    		// In most cases, if you don't have any selected text and click the button
+            // you'll get a selected, marked up region with the default text inserted.
+            if (!chunk.selection && !charsAfter) {
+                chunk.selection = insertText;
+            }
+            var markup = Array(nChars + 1).join(char);
+            
+            chunk.before = chunk.before + markup;
+            chunk.after = markup + chunk.after;
+    	}
+    }
 
     commandProto.doBold = function (chunk, postProcessing) {
-        return this.doBorI(chunk, postProcessing, 2, this.getString("boldexample"));
+        return this.doCommand(chunk, postProcessing, '*', 2, this.getString("boldexample"));
     };
 
     commandProto.doItalic = function (chunk, postProcessing) {
-        return this.doBorI(chunk, postProcessing, 1, this.getString("italicexample"));
+    	return this.doCommand(chunk, postProcessing, '*', 1, this.getString("italicexample"));
     };
 
+    
+    
+    
     // chunk: The selected region that will be enclosed with */**
     // nStars: 1 for italics, 2 for bold
     // insertText: If you just click the button without highlighting text, this gets inserted

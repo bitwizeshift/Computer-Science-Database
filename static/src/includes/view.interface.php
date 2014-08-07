@@ -21,7 +21,7 @@ interface View{
 	 *
 	 * @return string the string description 
 	 */
-	public function get_excerpt();
+	public function get_description();
 	/**
 	 * Get the list of authors for this view
 	 *
@@ -33,13 +33,13 @@ interface View{
 	 *
 	 * @return string the raw HTML content
 	 */
-	public function get_input_content();
+	public function get_raw_content();
 	/**
 	 * Get the parsed HTML content
 	 *
 	 * @return string the parsed HTML content
 	 */
-	public function get_output_content();
+	public function get_parsed_content();
 	/**
 	 * Gets the path to the resource file
 	 * 

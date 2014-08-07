@@ -42,18 +42,28 @@ $review = $query->query_posts("REVIEW",Query::SORT_DATE_DESC, 3);
 				<strong>Severe</strong>: This dashboard requires Javascript in order to make most changes and post articles!
 			</div>
 		</noscript>
-		<!-- 
+		<!--[if lt IE 9]>
+			<div class="callout warning">
+				<strong>Warning</strong>: This dashboard requires IE 9 or greater to be viewed properly!
+			</div>
+		<![endif]-->
+		
 		<div class="panel">
 			<h2 class="heading">Dashboard</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi iaculis vel lorem nec egestas. Integer sed turpis quis augue ullamcorper porttitor. Phasellus vitae hendrerit felis. Donec a nisl id odio scelerisque rhoncus. Curabitur interdum leo in magna dictum tempus. Mauris scelerisque viverra elit ut mattis. Aenean pharetra tellus ut purus eleifend, et consectetur lorem pellentesque.</p>
-			<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi vitae tellus tincidunt, ultricies velit vel, adipiscing dui. Duis vitae accumsan sapien. Quisque sit amet suscipit tellus. Integer malesuada est eu felis blandit aliquam. Aenean a commodo velit, sed molestie est. Cras aliquet condimentum turpis ut fringilla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean semper mi nisi, ut pellentesque lectus viverra ac. Donec viverra diam urna, sit amet consectetur tortor fermentum tincidunt. Etiam urna turpis, eleifend a eros quis, ultrices tincidunt lectus.</p>
-			<p>Proin non nibh sit amet justo fringilla sagittis nec a nibh. Duis auctor est non quam tristique pretium. Integer ac elit eget risus vestibulum sodales. Vestibulum vel vulputate augue, in aliquet ligula. Integer id risus libero. Nam id ultrices nibh. Morbi a ipsum nec tellus molestie eleifend at et ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc dictum gravida arcu, quis pellentesque erat. Pellentesque ultricies cursus egestas. Mauris lacus est, tincidunt vitae enim non, posuere condimentum nunc.</p>
-		</div>  -->
+			<h4>Welcome to your dashbard!</h4>
+			<p>From here you can view all of your updates, such as recently published posts, or posts that are pending reviews</p>
+			<h4>Hints</h4>
+			<ul>
+				<li>Recently updated posts can quickly be viewed or edited below by clicking 'view' or 'edit' respectively</li>
+				<li>You can access the options to add/edit/delete any post by clicking 'Posts' from the administration bar</li>
+				<li>To get back to this dashboard at any time, just click 'Dashboard' from the administration bar</li>
+			</ul>
+		</div>
 		<div class="panel">
 			<h2 class="heading">Recently Published</h2>
 			<?php 
 			if(empty($recent)){
-				echo("<p>There are no articles recently published at this time</p>");
+				echo("<p>There are no posts recently published at this time</p>");
 			}
 			foreach($recent as $post){
 				echo("<h3>{$post['title']} <a class='link' href='admin/post-edit.php?id={$post['id']}'>Edit</a><a class='link' href='article/{$post['slug']}'>View</a></h3>");
@@ -67,7 +77,7 @@ $review = $query->query_posts("REVIEW",Query::SORT_DATE_DESC, 3);
 			<h2>Needs Review</h2>
 			<?php 
 			if(empty($review)){
-				echo("<p>There are no articles to review at this time</p>");
+				echo("<p>There are no posts to review at this time</p>");
 			}
 			foreach($review as $post){
 				echo("<h3>{$post['title']} <a class='link' href='admin/post-edit.php?id={$post['id']}'>Review</a></h3>");

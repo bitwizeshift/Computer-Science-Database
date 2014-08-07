@@ -92,8 +92,8 @@ hr{
 ---------------------------------------------------------------------------- */
 
 p{margin: 0 0 10px;}
-strong{font-weight: 700; }
-em{font-style: italic; }
+b, strong{font-weight: 700; }
+i, em{font-style: italic; }
 sup, sub { vertical-align: baseline; position: relative; top: -0.4em; font-size: 75%; }
 sub { top: 0.4em; }
 code, pre{font-family: Menlo,Monaco,Consolas,"Courier New",monospace;}
@@ -109,7 +109,6 @@ del{
 	color: #ff0000;
 }
 small{font-size: 0.75em;}
-time{display: block;}
 a{
 	color: #428bca;
 	text-decoration:none;
@@ -127,6 +126,10 @@ li>ul{
 }
 /* Useful classes
 ---------------------------------------------------------------------------- */
+.placeholder{
+	color: #ccc;
+	font-style:italic;
+}
 .disabled{
 	pointer-events: none; 
 	cursor: default; 
@@ -165,7 +168,7 @@ a.link{
 	font-weight: 700;
 	font-size: 13px;
 }
-.link:hover{
+.link:hover, .link:focus{
 	background: #c8c8c8;
 	color: #fff;
 	-webkit-transition-property: border,background,color;
@@ -303,7 +306,6 @@ figured > figcaption{}
 	background-color: #dff0d8;
 	border-color: #d6e9c6;
 }
-
 .alert.warning{
 	color: #685D4A;
 	background-color: #FCFFB3;
@@ -320,7 +322,6 @@ figured > figcaption{}
 	border-color: #E07989;
 }
 
-
 .callout{
 	padding: 15px;
 	margin-bottom: 20px;
@@ -331,7 +332,6 @@ figured > figcaption{}
 	-webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
 	box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
 }
-
 .callout.boring{ border-left-color: #808080;}
 .callout.info{ border-left-color: #5BC0DE;    }
 .callout.nag{ border-left-color: #FFBA00;     }
@@ -343,8 +343,7 @@ figured > figcaption{}
 /* Navigation
 ---------------------------------------------------------------------------- */
 
-.navigation>ul{
-}
+.navigation>ul{}
 .navigation>ul>li:first-child{
 	border: 0;
 }
@@ -442,11 +441,12 @@ textarea{
 	transition: box-shadow 0.5s;
 	box-sizing:border-box
 }
-input.full-size{width: 100%; }
-input.half-size{width: 50%; }
 input:focus, textarea:focus{
 	box-shadow: 0 0 10px #ddd;
 }
+
+.full-size{width: 100%; }
+.half-size{width: 50%; }
 
 /* Gray Button */
 .button{
@@ -552,9 +552,11 @@ input:focus, textarea:focus{
 	
 }
 
-#content h1, #content h2, #content h3, 
-#content h4, #content h5, #content h6{
+#content h1, #content h2{
 	margin-bottom: 15px;
 	border-bottom: 1px solid #eee;
 	padding-bottom: 10px;
+}
+#content h3, #content h4, #content h5, #content h6{
+	margin-bottom: 10px;
 }

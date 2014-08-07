@@ -120,6 +120,20 @@ function get_site_title($separator="&raquo;"){
 	
 	return $siteinfo['name'] . " $separator " . $title;
 }
+/**
+ * 
+ * @param object $post Post data.
+ * @return bool True when finished.
+ */
+function setup_postdata( $post ){
+	
+	$id      = (int) $post->ID;
+	$title   = $post->title;
+	$excerpt = $post->excerpt;
+	$input   = $post->input;
+	$output  = $post->output;
+	
+}
 
 /**
  * 
@@ -148,10 +162,14 @@ function get_authors(){
 }
 
 
-
 function get_description(){
 	global $g_view;
 	return $g_view->get_description();
+}
+
+function get_parent(){
+	global $g_view;
+	return $g_view->get_parent();
 }
 
 function get_children(){
@@ -162,13 +180,6 @@ function get_children(){
 /* Getters: Content
  -------------------------------------------------------------------------- */
 
-/**
- * 
- */
-function get_raw_content(){
-	global $g_view;
-	
-}
 /**
  * 
  */

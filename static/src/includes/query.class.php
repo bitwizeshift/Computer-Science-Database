@@ -64,7 +64,7 @@ class Query extends Connection{
 	);
 	/* View Attributes */
 	private static $post_data_fields = array(
-			"id", "parent", "slug", "title", "type",
+			"id", "parent", "slug", "title", "post_type","term_type",
 			"excerpt", "input", "output", "date"
 	);
 	/* Constructor/Destructor/Initialization
@@ -209,7 +209,6 @@ class Query extends Connection{
 				$stmt->bindValue($i++,$value);
 			}
 		}
-
 		$stmt->execute();
 		return $stmt->fetchAll( PDO::FETCH_ASSOC );
 	}
